@@ -1,0 +1,26 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root{
+  --primary-background-color: #faeec9;
+  --secondary-background-color: #fcfaed;
+
+  --primary-text-color: black;
+
+  /* Quiz Page Colors */
+  --quiz-button-color: #242c43;
+  --quiz-button-text-color: white;
+
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: var(--primary-background-color);
+}
+  
+button:hover {
+  cursor: pointer;
+}
+  
