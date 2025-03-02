@@ -27,7 +27,7 @@ const router = createBrowserRouter([
       // Public routes
       {
         path: '/',
-        element: <StudentLogin />,
+        element: <StudentDashboard />,
       },
       
       // Student routes

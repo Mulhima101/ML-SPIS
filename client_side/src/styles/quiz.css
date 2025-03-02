@@ -2,20 +2,6 @@
 .quiz-container {
     min-height: 100vh;
     background-color: var(--primary-background-color);
-    padding: 20px;
-  }
-  
-  .quiz-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-  }
-  
-  .quiz-header h1 {
-    font-size: 24px;
-    color: #333;
-    margin: 0;
   }
   
   .timer {

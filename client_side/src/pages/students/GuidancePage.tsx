@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../../styles/guidance.css';
 
+import StHeader from '../../components/students/stHeader';
+
 interface TopicGuidance {
   topic: string;
   score: number;
@@ -175,12 +177,7 @@ const GuidancePage: React.FC = () => {
   
   return (
     <div className="guidance-container">
-      <header className="guidance-header">
-        <h1>Personalized Learning Guidance</h1>
-        <div className="header-actions">
-          <Link to="/students/dashboard" className="back-button">Back to Dashboard</Link>
-        </div>
-      </header>
+      <StHeader />
       
       <div className="guidance-tabs">
         <button 

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../../styles/quiz.css';
 
+import StHeader from '../../components/students/stHeader';
+
 interface QuizQuestion {
   id: string;
   text: string;
@@ -239,14 +241,7 @@ const QuizPage: React.FC = () => {
   
   return (
     <div className="quiz-container">
-      <header className="quiz-header">
-        <h1>{quiz.title}</h1>
-        <div className="timer">
-          Time remaining: <span className={timeRemaining < 60 ? 'time-critical' : ''}>
-            {formatTime(timeRemaining)}
-          </span>
-        </div>
-      </header>
+      <StHeader />
       
       <div className="quiz-progress">
         <div className="progress-bar">

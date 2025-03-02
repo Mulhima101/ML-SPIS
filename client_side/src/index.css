@@ -9,6 +9,9 @@
   --primary-accent-color: #f57c00;
   --primary-accent-hover-color: #ef6c00;
 
+  --header-bg: #fcfaed;
+  --header-btn-active: var(--primary-background-color);
+
   /* Knowledge Level Colors */
   --low-level-color: #f44336;  
   --normal-level-color: #2196f3;

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../../styles/profile.css';
 
+import StHeader from '../../components/students/stHeader';
+
 interface Student {
   name: string;
   email: string;
@@ -128,12 +130,7 @@ const StudentProfile: React.FC = () => {
   
   return (
     <div className="profile-container">
-      <header className="profile-header">
-        <h1>Student Profile</h1>
-        <div className="header-actions">
-          <Link to="/students/dashboard" className="back-button">Back to Dashboard</Link>
-        </div>
-      </header>
+      <StHeader />
       
       <div className="profile-content">
         <div className="profile-card">

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import '../../styles/quiz.css';
 
+import StHeader from '../../components/students/stHeader';
+
 interface Question {
   id: string;
   text: string;
@@ -139,13 +141,7 @@ const SingleQuestionPage: React.FC = () => {
   
   return (
     <div className="single-question-container">
-      <header className="question-header">
-        <h1>{quiz.title}</h1>
-        <div className="question-meta">
-          <span className="question-count">Question {questionNumber} of {totalQuestions}</span>
-          <span className="time-spent">Time: {formatTime(timeSpent)}</span>
-        </div>
-      </header>
+      <StHeader />
       
       <div className="progress-bar">
         <div 

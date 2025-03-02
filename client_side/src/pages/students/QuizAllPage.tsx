@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../../styles/quiz-all.css';
 
+import StHeader from '../../components/students/stHeader';
+
 interface Quiz {
   id: string;
   title: string;
@@ -149,12 +151,7 @@ const QuizAllPage: React.FC = () => {
   
   return (
     <div className="quiz-all-container">
-      <header className="quizzes-header">
-        <h1>All Quizzes</h1>
-        <div className="header-actions">
-          <Link to="/students/dashboard" className="back-button">Back to Dashboard</Link>
-        </div>
-      </header>
+      <StHeader />
       
       <div className="quiz-controls">
         <div className="search-container">

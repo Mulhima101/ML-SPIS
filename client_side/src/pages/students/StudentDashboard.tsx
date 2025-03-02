@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../../styles/dashboard.css';
 
+import StHeader from '../../components/students/stHeader';
+
 interface Quiz {
   id: string;
   title: string;
@@ -102,18 +104,9 @@ const StudentDashboard: React.FC = () => {
   
   return (
     <div className="dashboard-container">
-      <header className="dashboard-header">
-        <h1>Student Dashboard</h1>
-        <div className="user-menu">
-          <span className="user-name">
-            {JSON.parse(localStorage.getItem('studentUser') || '{}').name || 'Student'}
-          </span>
-          <Link to="/students/profile" className="profile-link">Profile</Link>
-          <Link to="/students/login" className="logout-button">Logout</Link>
-        </div>
-      </header>
+      <StHeader />
       
-      <main className="dashboard-content">
+      <main className="dashboard-content mx-6">
         <section className="knowledge-level-section">
           <h2>My Knowledge Level</h2>
           {knowledgeLevel && (
