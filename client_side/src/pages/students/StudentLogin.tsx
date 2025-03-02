@@ -1,42 +1,87 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import '../../styles/auth.css';
 
 const StudentLogin: React.FC = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState<string>('');
+  const [password, setPassword] = useState<string>('');
+  const [error, setError] = useState<string>('');
+  const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("Student Login", { email, password });
+    setError('');
+
+    try {
+      // This would normally connect to your backend API
+      // For now, we'll simulate a successful login
+      console.log('Logging in with:', { email, password });
+      
+      // Mock successful login
+      if (email && password) {
+        // Store user info in localStorage or context
+        localStorage.setItem('studentUser', JSON.stringify({ email }));
+        // Redirect to dashboard
+        navigate('/students/dashboard');
+      } else {
+        setError('Please enter both email and password');
+      }
+    } catch (err) {
+      setError('Login failed. Please check your credentials.');
+      console.error('Login error:', err);
+    }
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-yellow-50">
-      <div className="bg-yellow-100 p-8 rounded shadow-lg w-96">
-        <h1 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          Student Login
-        </h1>
-        <form onSubmit={handleSubmit}>
-          <input
-            type="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full p-3 mb-4 border border-yellow-300 rounded"
-          />
-          <input
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full p-3 mb-4 border border-yellow-300 rounded"
-          />
-          <button
-            type="submit"
-            className="w-full p-3 bg-yellow-500 hover:bg-yellow-600 text-white rounded font-medium"
-          >
-            Login
-          </button>
-        </form>
+    <div className="auth-container">
+      <div className="auth-card">
+        <div className="auth-left">
+          <h2>
+            <span>Machine Learning Based </span>
+            <br />
+            Student Progress Improvement
+            <br />
+            <span>System </span>
+          </h2>
+        </div>
+        <div className="auth-right">
+          <div className="close-button">×</div>
+          <h2>Student Login</h2>
+          
+          {error && <div className="error-message">{error}</div>}
+          
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <label>Email ID</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="student231@gmail.com"
+                required
+              />
+            </div>
+            
+            <div className="form-group">
+              <label>Password</label>
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••••"
+                required
+              />
+            </div>
+            
+            <button type="submit" className="login-button">
+              Login
+            </button>
+            
+            <div className="auth-links">
+              <Link to="/privacy-policy">Privacy Policy</Link> | <Link to="/students/register">Student Registration</Link>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

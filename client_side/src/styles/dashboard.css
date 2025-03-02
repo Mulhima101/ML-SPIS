@@ -1,0 +1,250 @@
+/* Dashboard Styles */
+.dashboard-container {
+    min-height: 100vh;
+    background-color: var(--primary-background-color);
+    padding: 20px;
+  }
+  
+  .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #e0e0e0;
+  }
+  
+  .dashboard-header h1 {
+    font-size: 28px;
+    color: #333;
+    margin: 0;
+  }
+  
+  .user-menu {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .user-name {
+    font-weight: 500;
+  }
+  
+  .profile-link {
+    color: #f57c00;
+    text-decoration: none;
+  }
+  
+  .logout-button {
+    padding: 8px 16px;
+    background-color: #f5f5f5;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    color: #555;
+    text-decoration: none;
+    font-size: 14px;
+    transition: all 0.2s;
+  }
+  
+  .logout-button:hover {
+    background-color: #f1f1f1;
+    border-color: #ccc;
+  }
+  
+  .dashboard-content {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  @media (min-width: 992px) {
+    .dashboard-content {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  
+  /* Knowledge Level Section */
+  .knowledge-level-section {
+    margin-bottom: 30px;
+  }
+  
+  .knowledge-level-section h2 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 15px;
+  }
+  
+  .knowledge-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+  }
+  
+  .knowledge-header {
+    margin-bottom: 20px;
+  }
+  
+  .knowledge-header h3 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 5px;
+  }
+  
+  .topic-scores {
+    margin-bottom: 20px;
+  }
+  
+  .topic-scores h4 {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 15px;
+  }
+  
+  .topic-score-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  
+  .topic-name {
+    width: 120px;
+    font-weight: 500;
+    color: #555;
+  }
+  
+  .progress-bar-container {
+    flex: 1;
+    height: 8px;
+    background-color: #f1f1f1;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0 10px;
+  }
+  
+  .progress-bar {
+    height: 100%;
+    border-radius: 4px;
+  }
+  
+  .score-value {
+    width: 50px;
+    text-align: right;
+    font-weight: 500;
+  }
+  
+  .guidance-link {
+    margin-top: 20px;
+    text-align: center;
+  }
+  
+  .button {
+    padding: 10px 16px;
+    background-color: #f57c00;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-weight: 500;
+    text-decoration: none;
+    display: inline-block;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  
+  .button:hover {
+    background-color: #ef6c00;
+  }
+  
+  /* Quizzes Section */
+  .quizzes-section {
+    margin-bottom: 30px;
+  }
+  
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+  }
+  
+  .section-header h2 {
+    font-size: 20px;
+    color: #333;
+    margin: 0;
+  }
+  
+  .view-all-link {
+    color: #f57c00;
+    text-decoration: none;
+    font-size: 14px;
+  }
+  
+  .quiz-list {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+  
+  @media (min-width: 768px) {
+    .quiz-list {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  .quiz-card {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    padding: 20px;
+  }
+  
+  .quiz-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
+  }
+  
+  .quiz-header h3 {
+    font-size: 16px;
+    color: #333;
+    margin: 0;
+  }
+  
+  .quiz-status {
+    font-size: 14px;
+    font-weight: 500;
+  }
+  
+  .quiz-info {
+    margin-bottom: 15px;
+    font-size: 14px;
+    color: #666;
+  }
+  
+  .quiz-info p {
+    margin: 5px 0;
+  }
+  
+  .quiz-actions {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .primary {
+    background-color: #2196f3;
+  }
+  
+  .primary:hover {
+    background-color: #1e88e5;
+  }
+  
+  /* Loading State */
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 200px;
+    font-size: 18px;
+    color: #666;
+  }
