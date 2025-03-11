@@ -1,3 +1,4 @@
+// src/pages/students/QuizPage.tsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../../styles/quiz.css';
@@ -27,7 +28,7 @@ const QuizPage: React.FC = () => {
   const [quiz, setQuiz] = useState<Quiz | null>(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<string, number>>({});
-  const [timeRemaining, setTimeRemaining] = useState<number>(0);
+  const [timeRemaining, setTimeRemaining] = useState<number>(1200); // 20 minutes in seconds
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
   
@@ -39,67 +40,187 @@ const QuizPage: React.FC = () => {
         setTimeout(() => {
           const mockQuiz: Quiz = {
             id: quizId || 'default',
-            title: 'Software Engineering Concepts',
+            title: 'What is Lorem Ipsum.',
             description: 'This quiz tests your knowledge of software engineering fundamentals.',
             timeLimit: 20, // 20 minutes
             questions: [
               {
                 id: 'q1',
-                text: 'What does SDLC stand for?',
-                topic: 'SDLC',
+                text: 'Quisque tristique molestie arcu. Fusce tincidunt dictum eros, tempus fermentum nunc ultrices eu. Proin in lacus eleifend, pharetra ipsum eget, lacinia elit.',
+                topic: 'Software Engineering',
                 options: [
-                  'Software Development Life Cycle',
-                  'System Design Life Cycle',
-                  'Software Design Level Control',
-                  'System Development Logic Control'
+                  'Maecenas turpis nibh',
+                  'faucibus ac convallis a',
+                  'aliquet sit amet quam',
+                  'tempus in volutpat at'
                 ],
                 correctAnswer: 0
               },
               {
                 id: 'q2',
-                text: 'Which of the following is NOT a phase in the traditional waterfall model?',
-                topic: 'SDLC',
+                text: 'Maecenas eleifend sapien felis, quis interdum ex tempor a. Aenean sodales, eros ac fermentum elementum, enim nisi finibus nisi, sed tempus turpis mauris ac quam.',
+                topic: 'Software Engineering',
                 options: [
-                  'Requirements Analysis',
-                  'Implementation',
-                  'Sprint Planning',
-                  'Maintenance'
+                  'Vivamus et hendrerit',
+                  'Donec finibus euismod',
+                  'Nulla convallis egestas',
+                  'Aliquam fringilla aliquam'
                 ],
                 correctAnswer: 2
               },
               {
                 id: 'q3',
-                text: 'What is the main advantage of Agile methodologies?',
-                topic: 'Agile',
+                text: 'Nullam a pretium nulla. Sed sed dapibus est, eget hendrerit ex. Aenean id libero arcu. Ut tempus diam id eros elementum, eu sodales justo ornare.',
+                topic: 'Software Engineering',
                 options: [
-                  'Less documentation required',
-                  'Adaptability to changing requirements',
-                  'No need for testing',
-                  'Reduced development time'
+                  'Praesent malesuada urna',
+                  'Vivamus vel fermentum',
+                  'Proin et condimentum',
+                  'Duis viverra diam non'
                 ],
                 correctAnswer: 1
               },
               {
                 id: 'q4',
-                text: 'Which of the following best describes the OSI Model?',
-                topic: 'OSI Model',
+                text: 'Fusce pharetra suscipit orci nec tempor. Quisque vitae sem sit amet sem mollis consequat. Sed at imperdiet lorem.',
+                topic: 'Software Engineering',
                 options: [
-                  'A programming paradigm',
-                  'A network architecture model',
-                  'A database management system',
-                  'A version control system'
+                  'Aliquam erat volutpat',
+                  'Nunc aliquet bibendum',
+                  'Suspendisse lectus tortor',
+                  'Vivamus rhoncus molestie'
+                ],
+                correctAnswer: 3
+              },
+              {
+                id: 'q5',
+                text: 'Vestibulum congue cursus lorem, vitae varius nunc condimentum et. Vestibulum feugiat imperdiet dapibus. Aliquam eu sodales diam.',
+                topic: 'Software Engineering',
+                options: [
+                  'Suspendisse potenti',
+                  'leo a diam volutpat',
+                  'Vivamus et hendrerit tortor',
+                  'volutpat quam tincidunt'
+                ],
+                correctAnswer: 0
+              },
+              {
+                id: 'q6',
+                text: 'Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Ut arcu libero, pulvinar non massa sed, accumsan scelerisque dui.',
+                topic: 'Software Engineering',
+                options: [
+                  'Morbi euismod magna',
+                  'Proin sagittis maximus',
+                  'Cras convallis lacus',
+                  'Fusce non bibendum'
                 ],
                 correctAnswer: 1
               },
               {
-                id: 'q5',
-                text: 'How many layers does the OSI Model have?',
-                topic: 'OSI Model',
+                id: 'q7',
+                text: 'Maecenas et metus nisl. Morbi ac interdum metus. Aliquam erat volutpat. Donec posuere fringilla augue ut ultricies.',
+                topic: 'Software Engineering',
                 options: [
-                  '5',
-                  '6',
-                  '7',
-                  '8'
+                  'Pellentesque dapibus suscipit',
+                  'Donec tempor ipsum',
+                  'Fusce eu dui finibus',
+                  'Morbi scelerisque blandit'
+                ],
+                correctAnswer: 2
+              },
+              {
+                id: 'q8',
+                text: 'Nulla at nulla justo, eget luctus tortor. Nulla facilisi. Duis aliquet egestas purus in blandit. Curabitur vulputate, ligula lacinia scelerisque tempor.',
+                topic: 'Software Engineering',
+                options: [
+                  'Nunc blandit ligula',
+                  'Sed eget libero vel',
+                  'Pellentesque accumsan',
+                  'Cras tincidunt sit amet'
+                ],
+                correctAnswer: 0
+              },
+              {
+                id: 'q9',
+                text: 'Ut convallis libero in urna ultrices accumsan. Donec sed odio eros. Donec viverra mi quis quam pulvinar at malesuada arcu rhoncus.',
+                topic: 'Software Engineering',
+                options: [
+                  'Nulla quis lorem ut',
+                  'Sed cursus ante dapibus',
+                  'Duis sodales odio',
+                  'Fusce ac turpis quis'
+                ],
+                correctAnswer: 3
+              },
+              {
+                id: 'q10',
+                text: 'Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Donec pharetra, magna vestibulum aliquet ultrices.',
+                topic: 'Software Engineering',
+                options: [
+                  'Praesent blandit laoreet',
+                  'Mauris blandit aliquet',
+                  'Curabitur arcu erat',
+                  'Aenean commodo ligula'
+                ],
+                correctAnswer: 1
+              },
+              {
+                id: 'q11',
+                text: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer posuere erat a ante. Vivamus elementum semper nisi. Aenean vulputate eleifend tellus.',
+                topic: 'Software Engineering',
+                options: [
+                  'Maecenas tempus tellus',
+                  'Donec vitae sapien ut',
+                  'Nam eget dui. Etiam',
+                  'Nullam quis ante'
+                ],
+                correctAnswer: 0
+              },
+              {
+                id: 'q12',
+                text: 'Quisque rutrum. Aenean imperdiet. Etiam ultricies nisi vel augue. Curabitur ullamcorper ultricies nisi. Nam eget dui. Etiam rhoncus.',
+                topic: 'Software Engineering',
+                options: [
+                  'Maecenas tempus',
+                  'Donec sodales sagittis',
+                  'Sed consequat, leo eget',
+                  'Aliquam lorem ante'
+                ],
+                correctAnswer: 2
+              },
+              {
+                id: 'q13',
+                text: 'Maecenas nec odio et ante tincidunt tempus. Donec vitae sapien ut libero venenatis faucibus. Nullam quis ante. Etiam sit amet orci eget eros faucibus.',
+                topic: 'Software Engineering',
+                options: [
+                  'Fusce vulputate eleifend',
+                  'Aenean leo ligula',
+                  'Quisque id odio',
+                  'Suspendisse potenti'
+                ],
+                correctAnswer: 1
+              },
+              {
+                id: 'q14',
+                text: 'Praesent congue erat at massa. Sed cursus turpis vitae tortor. Donec posuere vulputate arcu. Phasellus accumsan cursus velit.',
+                topic: 'Software Engineering',
+                options: [
+                  'Vestibulum ante ipsum',
+                  'Praesent blandit dolore',
+                  'Fusce fermentum odio',
+                  'Nam pretium turpis'
+                ],
+                correctAnswer: 3
+              },
+              {
+                id: 'q15',
+                text: 'Vestibulum congue luctus lorem, vitae varius nunc condimentum et. Vestibulum feugiat imperdiet dapibus. Aliquam eu sodales diam.',
+                topic: 'Software Engineering',
+                options: [
+                  'Suspendisse potenti',
+                  'leo a diam volutpat',
+                  'Vivamus et hendrerit tortor',
+                  'volutpat quam tincidunt'
                 ],
                 correctAnswer: 2
               }
@@ -202,9 +323,6 @@ const QuizPage: React.FC = () => {
         knowledgeLevel
       });
       
-      // In a real app, you would send this data to your API
-      // await api.submitQuizResults({ ... });
-      
       // Navigate to results page
       navigate(`/students/quiz-result/${quizId}`, { 
         state: { 
@@ -237,82 +355,116 @@ const QuizPage: React.FC = () => {
   const currentQuestion = quiz.questions[currentQuestionIndex];
   const isAnswered = selectedAnswers[currentQuestion.id] !== undefined;
   const isLastQuestion = currentQuestionIndex === quiz.questions.length - 1;
-  const allQuestionsAnswered = quiz.questions.every(q => selectedAnswers[q.id] !== undefined);
+  
+  // Determine which questions are answered (for the question number UI)
+  const answeredQuestions = Object.keys(selectedAnswers).map(id => {
+    return quiz.questions.findIndex(q => q.id === id);
+  });
   
   return (
-    <div className="quiz-container">
+    <div className="bg-[var(--primary-background-color)] min-h-screen">
       <StHeader />
       
-      <div className="quiz-progress">
-        <div className="progress-bar">
-          <div 
-            className="progress-filled" 
-            style={{ width: `${(currentQuestionIndex / quiz.questions.length) * 100}%` }}
-          ></div>
-        </div>
-        <div className="question-counter">
-          Question {currentQuestionIndex + 1} of {quiz.questions.length}
-        </div>
-      </div>
-      
-      <div className="question-container">
-        <div className="question-text">
-          <h2>{currentQuestion.text}</h2>
-          <div className="topic-tag">Topic: {currentQuestion.topic}</div>
-        </div>
+      <div className="max-w-screen-xl mx-auto px-4 py-6">
+        <h1 className="text-2xl font-bold text-center mb-6">{quiz.title}</h1>
         
-        <div className="options-container">
-          {currentQuestion.options.map((option, index) => (
-            <div 
-              key={index}
-              className={`option ${selectedAnswers[currentQuestion.id] === index ? 'selected' : ''}`}
-              onClick={() => handleOptionSelect(currentQuestion.id, index)}
-            >
-              <div className="option-letter">{String.fromCharCode(65 + index)}</div>
-              <div className="option-text">{option}</div>
+        <div className="flex">
+          {/* Left side - Question */}
+          <div className="w-2/3 pr-4">
+            <div className="bg-amber-200 rounded-2xl p-8 min-h-[600px] flex flex-col justify-between">
+              <div>
+                <h2 className="text-xl mb-6">
+                  {currentQuestionIndex + 1}. {currentQuestion.text}
+                </h2>
+                
+                <div className="space-y-4 mb-8">
+                  {currentQuestion.options.map((option, index) => (
+                    <button
+                      key={index}
+                      className="w-full p-4 bg-white rounded-lg text-left hover:bg-gray-50"
+                      onClick={() => handleOptionSelect(currentQuestion.id, index)}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="flex justify-between">
+                {currentQuestionIndex > 0 ? (
+                  <button 
+                    className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg"
+                    onClick={handlePrevQuestion}
+                  >
+                    ← Previous
+                  </button>
+                ) : (
+                  <button 
+                    className="bg-gray-200 text-gray-400 px-6 py-2 rounded-lg opacity-50 cursor-not-allowed"
+                    disabled
+                  >
+                    ← Previous
+                  </button>
+                )}
+                
+                {isLastQuestion ? (
+                  <button 
+                    className="bg-green-500 text-white px-8 py-2 rounded-lg"
+                    onClick={handleSubmitQuiz}
+                  >
+                    Submit →
+                  </button>
+                ) : (
+                  <button 
+                    className="bg-gray-800 text-white px-6 py-2 rounded-lg"
+                    onClick={handleNextQuestion}
+                  >
+                    Next →
+                  </button>
+                )}
+              </div>
             </div>
-          ))}
-        </div>
-      </div>
-      
-      <div className="quiz-navigation">
-        <button 
-          className="nav-button prev" 
-          onClick={handlePrevQuestion}
-          disabled={currentQuestionIndex === 0}
-        >
-          Previous
-        </button>
-        
-        {isLastQuestion ? (
-          <button 
-            className="submit-button"
-            onClick={handleSubmitQuiz}
-            disabled={!allQuestionsAnswered || isSubmitting}
-          >
-            {isSubmitting ? 'Submitting...' : 'Submit Quiz'}
-          </button>
-        ) : (
-          <button 
-            className="nav-button next" 
-            onClick={handleNextQuestion}
-            disabled={!isAnswered}
-          >
-            Next
-          </button>
-        )}
-      </div>
-      
-      <div className="question-navigator">
-        {quiz.questions.map((q, index) => (
-          <div 
-            key={index}
-            className={`question-dot ${index === currentQuestionIndex ? 'active' : ''} ${selectedAnswers[q.id] !== undefined ? 'answered' : ''}`}
-            onClick={() => setCurrentQuestionIndex(index)}
-          >
-            {index + 1}
           </div>
-        ))}
+          
+          {/* Right side - Question numbers and timer */}
+          <div className="w-1/3 pl-4">
+            <div className="bg-amber-100 rounded-2xl p-6 min-h-[600px] flex flex-col">
+              <h3 className="text-xl font-semibold mb-6">Question Numbers</h3>
+              
+              <div className="grid grid-cols-5 gap-4 mb-auto">
+                {Array.from({ length: 15 }, (_, i) => {
+                  // Set button color based on status
+                  let bgColor = "bg-amber-200"; // Default
+                  
+                  if (i === currentQuestionIndex) {
+                    bgColor = "bg-red-500 text-white"; // Current question
+                  } else if (answeredQuestions.includes(i)) {
+                    // For Image 2, show green for answered but not current questions
+                    bgColor = "bg-green-500 text-white";
+                  }
+                  
+                  return (
+                    <button
+                      key={i}
+                      className={`w-12 h-12 ${bgColor} rounded-lg flex items-center justify-center font-bold`}
+                      onClick={() => setCurrentQuestionIndex(i)}
+                    >
+                      {i + 1}
+                    </button>
+                  );
+                })}
+              </div>
+              
+              <div className="mt-auto flex justify-center">
+                <div className="w-32 h-32 rounded-full border-4 border-amber-500 flex items-center justify-center">
+                  <span className="text-3xl font-bold text-amber-500">
+                    {formatTime(timeRemaining)}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

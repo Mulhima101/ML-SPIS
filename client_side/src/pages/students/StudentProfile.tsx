@@ -1,3 +1,4 @@
+// src/pages/students/StudentProfile.tsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import '../../styles/profile.css';
@@ -42,9 +43,9 @@ const StudentProfile: React.FC = () => {
           const storedUser = JSON.parse(localStorage.getItem('studentUser') || '{}');
           
           const mockStudent: Student = {
-            name: storedUser.name || 'John Doe',
-            email: storedUser.email || 'student231@gmail.com',
-            studentId: storedUser.studentId || 'ITBIN-2110-0001',
+            name: storedUser.name || 'Mulhima Jawahir',
+            email: storedUser.email || 'jawahirm821@gmail.com',
+            studentId: storedUser.studentId || 'ITBIN-2110-0063',
             department: 'Information Technology',
             semester: 5,
             joinDate: '2021-09-01',
@@ -111,13 +112,18 @@ const StudentProfile: React.FC = () => {
     }
   };
   
-  const getLevelColor = (level: string): string => {
-    switch(level) {
-      case 'Low': return 'red';
-      case 'Normal': return 'blue';
-      case 'High': return 'green';
-      default: return 'gray';
-    }
+  const getInitials = (name: string): string => {
+    return name
+      .split(' ')
+      .map(n => n[0])
+      .join('')
+      .toUpperCase();
+  };
+  
+  const getScoreColor = (score: number): string => {
+    if (score >= 0.8) return '#4caf50'; // Green for high scores
+    if (score >= 0.65) return '#2196f3'; // Blue for medium scores
+    return '#f44336'; // Red for low scores
   };
   
   if (loading) {
@@ -129,47 +135,60 @@ const StudentProfile: React.FC = () => {
   }
   
   return (
-    <div className="profile-container">
-      <StHeader />
+    <div className="min-h-screen bg-[#faeec9] p-6">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-2xl font-semibold text-gray-800">Student Profile</h1>
+        <Link 
+          to="/students/dashboard" 
+          className="px-4 py-2 bg-gray-100 rounded-md text-gray-700 hover:bg-gray-200 transition"
+        >
+          Back to Dashboard
+        </Link>
+      </div>
       
-      <div className="profile-content">
-        <div className="profile-card">
-          <div className="profile-image">
-            {student.profileImage ? (
-              <img src={student.profileImage} alt={student.name} />
-            ) : (
-              <div className="profile-initial">{student.name?.charAt(0)}</div>
-            )}
+      <div className="flex flex-col md:flex-row gap-6">
+        {/* Left column - student info */}
+        <div className="w-full md:w-1/3 bg-white rounded-lg shadow-sm p-6">
+          <div className="flex flex-col items-center mb-6">
+            <div 
+              className="w-36 h-36 rounded-full bg-[#f57c00] flex items-center justify-center text-white text-3xl font-bold mb-4"
+              style={{ fontSize: '36px' }}
+            >
+              {student.name.split(' ')[0].substring(0, 5)}
+            </div>
           </div>
           
           {isEditing ? (
-            <div className="profile-edit-form">
-              <div className="form-group">
-                <label>Full Name</label>
+            <form className="space-y-4">
+              <div>
+                <label className="block text-gray-600 mb-1 text-sm">Full Name</label>
                 <input
                   type="text"
                   name="name"
                   value={editForm.name || ''}
                   onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-300 rounded-md"
                 />
               </div>
               
-              <div className="form-group">
-                <label>Email</label>
+              <div>
+                <label className="block text-gray-600 mb-1 text-sm">Email</label>
                 <input
                   type="email"
                   name="email"
                   value={editForm.email || ''}
                   onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-300 rounded-md"
                 />
               </div>
               
-              <div className="form-group">
-                <label>Department</label>
+              <div>
+                <label className="block text-gray-600 mb-1 text-sm">Department</label>
                 <select
                   name="department"
                   value={editForm.department || ''}
                   onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-300 rounded-md"
                 >
                   <option value="Information Technology">Information Technology</option>
                   <option value="Computer Science">Computer Science</option>
@@ -177,8 +196,8 @@ const StudentProfile: React.FC = () => {
                 </select>
               </div>
               
-              <div className="form-group">
-                <label>Semester</label>
+              <div>
+                <label className="block text-gray-600 mb-1 text-sm">Semester</label>
                 <input
                   type="number"
                   name="semester"
@@ -186,12 +205,14 @@ const StudentProfile: React.FC = () => {
                   onChange={handleInputChange}
                   min="1"
                   max="8"
+                  className="w-full p-2 border border-gray-300 rounded-md"
                 />
               </div>
               
-              <div className="form-actions">
+              <div className="flex gap-2 pt-2">
                 <button 
-                  className="cancel-button" 
+                  type="button"
+                  className="px-4 py-2 bg-gray-200 text-gray-700 rounded-md"
                   onClick={() => {
                     setIsEditing(false);
                     setEditForm(student);
@@ -199,106 +220,136 @@ const StudentProfile: React.FC = () => {
                 >
                   Cancel
                 </button>
-                <button className="save-button" onClick={handleSaveProfile}>
+                <button 
+                  type="button"
+                  className="px-4 py-2 bg-[#f57c00] text-white rounded-md"
+                  onClick={handleSaveProfile}
+                >
                   Save Changes
                 </button>
               </div>
-            </div>
+            </form>
           ) : (
-            <>
-              <div className="profile-details">
-                <h2>{student.name}</h2>
-                <p className="student-id">{student.studentId}</p>
-                <p className="student-email">{student.email}</p>
-                
-                <div className="additional-details">
-                  <div className="detail-item">
-                    <span className="detail-label">Department</span>
-                    <span className="detail-value">{student.department}</span>
-                  </div>
-                  
-                  <div className="detail-item">
-                    <span className="detail-label">Semester</span>
-                    <span className="detail-value">{student.semester}</span>
-                  </div>
-                  
-                  <div className="detail-item">
-                    <span className="detail-label">Joined</span>
-                    <span className="detail-value">
-                      {student.joinDate ? new Date(student.joinDate).toLocaleDateString() : 'N/A'}
-                    </span>
-                  </div>
-                </div>
+            <div className="space-y-4">
+              <div>
+                <label className="block text-gray-600 mb-1 text-sm">Full Name</label>
+                <input
+                  type="text"
+                  value={student.name}
+                  className="w-full p-2 border border-gray-300 rounded-md bg-gray-50"
+                  readOnly
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-600 mb-1 text-sm">Email</label>
+                <input
+                  type="email"
+                  value={student.email}
+                  className="w-full p-2 border border-gray-300 rounded-md bg-gray-50"
+                  readOnly
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-600 mb-1 text-sm">Department</label>
+                <select
+                  value={student.department}
+                  className="w-full p-2 border border-gray-300 rounded-md bg-gray-50"
+                  disabled
+                >
+                  <option>{student.department}</option>
+                </select>
+              </div>
+              
+              <div>
+                <label className="block text-gray-600 mb-1 text-sm">Semester</label>
+                <input
+                  type="number"
+                  value={student.semester}
+                  className="w-full p-2 border border-gray-300 rounded-md bg-gray-50"
+                  readOnly
+                />
               </div>
               
               <button 
-                className="edit-profile-button"
+                className="mt-4 px-4 py-2 bg-[#f57c00] text-white rounded-md w-full"
                 onClick={() => setIsEditing(true)}
               >
                 Edit Profile
               </button>
-            </>
+            </div>
           )}
         </div>
         
+        {/* Right column - performance summary */}
         {performanceSummary && (
-          <div className="performance-card">
-            <h2>Performance Summary</h2>
+          <div className="w-full md:w-2/3 bg-white rounded-lg shadow-sm p-6">
+            <h2 className="text-xl font-semibold text-gray-800 mb-6">Performance Summary</h2>
             
-            <div className="performance-overview">
-              <div className="performance-item">
-                <span className="performance-label">Knowledge Level</span>
-                <span 
-                  className="performance-value"
-                  style={{ color: getLevelColor(performanceSummary.level) }}
-                >
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+              <div className="bg-gray-50 p-4 rounded-md">
+                <p className="text-sm text-gray-600">Knowledge Level</p>
+                <p className="text-xl font-semibold" style={{ color: '#2196f3' }}>
                   {performanceSummary.level}
-                </span>
+                </p>
               </div>
               
-              <div className="performance-item">
-                <span className="performance-label">Overall Score</span>
-                <span className="performance-value">
+              <div className="bg-gray-50 p-4 rounded-md">
+                <p className="text-sm text-gray-600">Overall Score</p>
+                <p className="text-xl font-semibold">
                   {(performanceSummary.overallScore * 100).toFixed(1)}%
-                </span>
+                </p>
               </div>
               
-              <div className="performance-item">
-                <span className="performance-label">Quizzes Completed</span>
-                <span className="performance-value">{performanceSummary.quizzesCompleted}</span>
+              <div className="bg-gray-50 p-4 rounded-md">
+                <p className="text-sm text-gray-600">Quizzes Completed</p>
+                <p className="text-xl font-semibold">
+                  {performanceSummary.quizzesCompleted}
+                </p>
               </div>
               
-              <div className="performance-item">
-                <span className="performance-label">Average Score</span>
-                <span className="performance-value">{performanceSummary.averageScore.toFixed(1)}%</span>
+              <div className="bg-gray-50 p-4 rounded-md">
+                <p className="text-sm text-gray-600">Average Score</p>
+                <p className="text-xl font-semibold">
+                  {performanceSummary.averageScore.toFixed(1)}%
+                </p>
               </div>
             </div>
             
-            <div className="topic-performance">
-              <h3>Topic Performance</h3>
-              
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Topic Performance</h3>
+            
+            <div className="space-y-4 mb-6">
               {performanceSummary.topicScores.map(topic => (
-                <div key={topic.topic} className="topic-score-item">
-                  <span className="topic-name">{topic.topic}</span>
-                  <div className="progress-bar-container">
-                    <div
-                      className="progress-bar"
+                <div key={topic.topic} className="flex items-center">
+                  <span className="w-1/4 text-gray-700">{topic.topic}</span>
+                  <div className="flex-1 h-2 bg-gray-200 rounded-full mx-4">
+                    <div 
+                      className="h-2 rounded-full" 
                       style={{ 
                         width: `${topic.score * 100}%`,
-                        backgroundColor: topic.score < 0.5 ? 'red' : topic.score < 0.8 ? 'blue' : 'green'
+                        backgroundColor: getScoreColor(topic.score)
                       }}
                     ></div>
                   </div>
-                  <span className="score-value">{(topic.score * 100).toFixed(0)}%</span>
+                  <span className="w-16 text-right font-medium">
+                    {(topic.score * 100).toFixed(0)}%
+                  </span>
                 </div>
               ))}
             </div>
             
-            <div className="performance-actions">
-              <Link to="/students/guidance" className="button">
+            <div className="flex flex-wrap gap-4">
+              <Link 
+                to="/students/guidance" 
+                className="px-6 py-3 bg-[#f57c00] text-white rounded-md hover:bg-[#ef6c00] transition"
+              >
                 View Personalized Guidance
               </Link>
-              <Link to="/students/quizzes" className="button">
+              <Link 
+                to="/students/quizzes" 
+                className="px-6 py-3 bg-[#f57c00] text-white rounded-md hover:bg-[#ef6c00] transition"
+              >
                 View All Quizzes
               </Link>
             </div>

@@ -1,6 +1,4 @@
 import { createBrowserRouter } from 'react-router-dom';
-
-// Layouts
 import MainLayout from '../layouts/main';
 
 // Student Pages
@@ -18,6 +16,7 @@ import ProfessorLogin from '../pages/professors/ProfessorLogin';
 import ProfessorRegistration from '../pages/professors/ProfessorRegistration';
 import ProfessorProfile from '../pages/professors/ProfessorProfile';
 import StudentDetails from '../pages/professors/StudentDetails';
+import StudentsList from '../pages/professors/StudentsList'; // Add this import
 
 const router = createBrowserRouter([
   {
@@ -83,7 +82,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/professors/students',
-        element: <StudentDetails />, // This should be a list of students
+        element: <StudentsList />, // Updated to the new component
       },
       {
         path: '/professors/student/:studentId',

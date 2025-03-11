@@ -2,6 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
+/* src/index.css (or update the existing :root variables) */
 :root {
   --primary-background-color: #faeec9;
   --secondary-background-color: #fcfaed;

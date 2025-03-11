@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import '../../styles/auth.css';
 
 const ProfessorLogin: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -13,14 +12,14 @@ const ProfessorLogin: React.FC = () => {
     setError('');
 
     try {
-      // This would connect to your backend API in production
+      // This would normally connect to your backend API
       console.log('Professor logging in with:', { email, password });
       
       // Mock successful login
       if (email && password) {
         // Store user info in localStorage or context
         localStorage.setItem('professorUser', JSON.stringify({ email }));
-        // Redirect to professor dashboard
+        // Redirect to dashboard
         navigate('/professors/profile');
       } else {
         setError('Please enter both email and password');
@@ -32,52 +31,65 @@ const ProfessorLogin: React.FC = () => {
   };
 
   return (
-    <div className="auth-container">
-      <div className="auth-card">
-        <div className="auth-left">
-          <h2>
-            <span>Machine Learning</span>
-            <br />
-            Based Student Improvement
-            <br />
-            System
-          </h2>
+    <div className="min-h-screen flex items-center justify-center bg-[var(--primary-background-color)]">
+      <div className="flex w-full max-w-4xl rounded-2xl overflow-hidden shadow-xl">
+        <div className="w-2/5 bg-amber-300 flex items-center justify-center p-12">
+          <div className="text-center">
+          <h2 className="text-2xl font-bold">
+              <span className="text-xl">Machine Learning Based </span>
+              <br />
+              <span className="text-2xl">Student Progress</span>
+              <br />
+              <span className="text-2xl">Improvement System</span>
+            </h2>
+          </div>
         </div>
-        <div className="auth-right">
-          <div className="close-button">×</div>
-          <h2>Professor Login</h2>
+        
+        <div className="w-3/5 bg-[var(--secondary-background-color)] p-12 relative">
+          <div className="absolute top-4 right-4 text-2xl cursor-pointer">×</div>
           
-          {error && <div className="error-message">{error}</div>}
+          <h2 className="text-2xl font-bold mb-8 text-center">Professor Login</h2>
+          
+          {error && (
+            <div className="bg-red-100 text-red-700 p-3 rounded-md mb-6 text-sm">
+              {error}
+            </div>
+          )}
           
           <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label>Email ID</label>
+            <div className="mb-6">
+              <label className="block text-gray-700 mb-2 font-medium">Email ID</label>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="professor231@gmail.com"
+                className="w-full p-3 border border-gray-300 rounded-lg"
                 required
               />
             </div>
             
-            <div className="form-group">
-              <label>Password</label>
+            <div className="mb-8">
+              <label className="block text-gray-700 mb-2 font-medium">Password</label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••••"
+                placeholder="•••••••••••"
+                className="w-full p-3 border border-gray-300 rounded-lg"
                 required
               />
             </div>
             
-            <button type="submit" className="login-button">
+            <button 
+              type="submit" 
+              className="w-full py-3 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition"
+            >
               Login
             </button>
             
-            <div className="auth-links">
-              <Link to="/privacy-policy">Privacy Policy</Link> | <Link to="/professors/register">Professor Registration</Link>
+            <div className="mt-6 text-center text-sm">
+              <Link to="/privacy-policy" className="text-amber-600">Privacy Policy</Link> | <Link to="/professors/register" className="text-amber-600">Professor Registration</Link>
             </div>
           </form>
         </div>

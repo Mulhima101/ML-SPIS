@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import '../../styles/quiz.css';
 
 import StHeader from '../../components/students/stHeader';
 
@@ -9,8 +8,8 @@ interface Question {
   text: string;
   topic: string;
   options: string[];
-  correctAnswer?: number; // Only available in review mode
-  explanation?: string; // Only available in review mode
+  correctAnswer?: number;
+  explanation?: string;
 }
 
 interface Quiz {
@@ -33,45 +32,38 @@ const SingleQuestionPage: React.FC = () => {
   const [isSaving, setIsSaving] = useState<boolean>(false);
   
   useEffect(() => {
-    // Mock fetching question data
     const fetchQuestionData = async () => {
       try {
-        // In a real app, this would be an API call
         setTimeout(() => {
           const mockQuiz: Quiz = {
             id: quizId || 'default',
-            title: 'Software Engineering Concepts'
+            title: 'What is Lorem Ipsum.'
           };
-          
-          // Check URL for review mode
+
           const isInReviewMode = window.location.search.includes('review=true');
           
           const mockQuestion: Question = {
             id: questionId || 'q1',
-            text: 'What does SDLC stand for in software engineering?',
+            text: 'Quisque tristique molestie arcu. Fusce tincidunt dictum eros, tempus fermentum nunc ultrices eu. Proin in lacus eleifend, pharetra ipsum eget, lacinia elit.',
             topic: 'SDLC',
             options: [
-              'Software Development Life Cycle',
-              'System Design Life Cycle',
-              'Software Design Level Control',
-              'System Development Logic Control'
+              'Maecenas turpis nibh',
+              'faucibus ac convallis a',
+              'aliquet sit amet quam',
+              'tempus in volutpat at'
             ]
           };
           
-          // Add review-specific data if in review mode
           if (isInReviewMode) {
-            mockQuestion.correctAnswer = 0; // First option is correct
-            mockQuestion.explanation = 'SDLC (Software Development Life Cycle) is a process followed for a software project, within a software organization. It consists of a detailed plan describing how to develop, maintain, replace and alter or enhance specific software.';
+            mockQuestion.correctAnswer = 0;
+            mockQuestion.explanation = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
           }
           
           setQuiz(mockQuiz);
           setQuestion(mockQuestion);
           setIsReviewMode(isInReviewMode);
-          
-          // Mock question number and total
           setQuestionNumber(parseInt(questionId || '1'));
           setTotalQuestions(15);
-          
           setLoading(false);
         }, 800);
       } catch (error) {
@@ -82,7 +74,6 @@ const SingleQuestionPage: React.FC = () => {
     
     fetchQuestionData();
     
-    // Start timer
     const timer = setInterval(() => {
       setTimeSpent(prev => prev + 1);
     }, 1000);
@@ -91,7 +82,7 @@ const SingleQuestionPage: React.FC = () => {
   }, [quizId, questionId]);
   
   const handleOptionSelect = (optionIndex: number) => {
-    if (isReviewMode) return; // Don't allow changes in review mode
+    if (isReviewMode) return;
     setSelectedOption(optionIndex);
   };
   
@@ -101,7 +92,6 @@ const SingleQuestionPage: React.FC = () => {
     setIsSaving(true);
     
     try {
-      // In a real app, you would send the answer to your API
       console.log('Submitting answer:', {
         quizId,
         questionId,
@@ -109,10 +99,8 @@ const SingleQuestionPage: React.FC = () => {
         timeSpent
       });
       
-      // Mock API call delay
       await new Promise(resolve => setTimeout(resolve, 500));
       
-      // Navigate to next question or completion
       if (questionNumber < totalQuestions) {
         navigate(`/students/quiz/${quizId}/question/${questionNumber + 1}`);
       } else {
@@ -140,101 +128,88 @@ const SingleQuestionPage: React.FC = () => {
   }
   
   return (
-    <div className="single-question-container">
+    <div className="min-h-screen bg-[var(--primary-background-color)]">
       <StHeader />
       
-      <div className="progress-bar">
-        <div 
-          className="progress-filled"
-          style={{ width: `${(questionNumber / totalQuestions) * 100}%` }}
-        ></div>
-      </div>
-      
-      <div className="question-content">
-        <div className="question-text">
-          <h2>{question.text}</h2>
-          <div className="topic-tag">Topic: {question.topic}</div>
-        </div>
+      <div className="container mx-auto px-4 py-6">
+        <h1 className="text-2xl font-bold mb-6">{quiz.title}</h1>
         
-        <div className="options-list">
-          {question.options.map((option, index) => (
-            <div 
-              key={index}
-              className={`option-item ${selectedOption === index ? 'selected' : ''} ${
-                isReviewMode && question.correctAnswer === index ? 'correct' : ''
-              } ${
-                isReviewMode && selectedOption === index && question.correctAnswer !== index ? 'incorrect' : ''
-              }`}
-              onClick={() => handleOptionSelect(index)}
-            >
-              <div className="option-marker">{String.fromCharCode(65 + index)}</div>
-              <div className="option-text">{option}</div>
+        <div className="bg-[var(--secondary-background-color)] rounded-xl p-8 mb-6">
+          <div className="flex flex-col mb-6">
+            <p className="text-xl font-medium mb-4">{questionNumber}. {question.text}</p>
+            
+            <div className="space-y-4 mb-8">
+              {question.options.map((option, index) => (
+                <button
+                  key={index}
+                  className={`w-full text-left p-4 rounded-lg transition-colors ${
+                    selectedOption === index 
+                      ? 'bg-[var(--quiz-button-color)] text-white' 
+                      : 'bg-white hover:bg-gray-100'
+                  }`}
+                  onClick={() => handleOptionSelect(index)}
+                >
+                  {option}
+                </button>
+              ))}
             </div>
-          ))}
+            
+            <div className="flex justify-between mt-4">
+              <button 
+                className="bg-gray-200 px-6 py-2 rounded-lg font-medium"
+                onClick={() => navigate(`/students/quiz/${quizId}/question/${questionNumber - 1}`)}
+                disabled={questionNumber <= 1}
+              >
+                ← Previous
+              </button>
+              
+              {questionNumber < totalQuestions ? (
+                <button 
+                  className="bg-[var(--quiz-button-color)] text-white px-6 py-2 rounded-lg font-medium"
+                  onClick={handleSubmitAnswer}
+                  disabled={selectedOption === null || isSaving}
+                >
+                  Next →
+                </button>
+              ) : (
+                <button 
+                  className="bg-[var(--quiz-button-color)] text-white px-6 py-2 rounded-lg font-medium"
+                  onClick={handleSubmitAnswer}
+                  disabled={selectedOption === null || isSaving}
+                >
+                  Submit
+                </button>
+              )}
+            </div>
+          </div>
         </div>
         
-        {isReviewMode && question.explanation && (
-          <div className="explanation-box">
-            <h3>Explanation</h3>
-            <p>{question.explanation}</p>
+        <div className="bg-[var(--secondary-background-color)] rounded-xl p-6">
+          <p className="mb-4 font-medium">Question Numbers</p>
+          <div className="grid grid-cols-5 gap-3">
+            {Array.from({ length: totalQuestions }).map((_, index) => (
+              <Link
+                key={index}
+                to={`/students/quiz/${quizId}/question/${index + 1}`}
+                className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                  index + 1 === questionNumber 
+                    ? 'bg-red-500 text-white' 
+                    : index < questionNumber
+                      ? 'bg-green-500 text-white'
+                      : 'bg-amber-200'
+                }`}
+              >
+                {index + 1}
+              </Link>
+            ))}
           </div>
-        )}
-      </div>
-      
-      <div className="question-footer">
-        {isReviewMode ? (
-          <div className="review-navigation">
-            <button 
-              className="nav-button"
-              onClick={() => navigate(`/students/quiz/${quizId}/question/${questionNumber - 1}?review=true`)}
-              disabled={questionNumber <= 1}
-            >
-              Previous
-            </button>
-            
-            <Link to={`/students/quiz-result/${quizId}`} className="back-to-results">
-              Back to Results
-            </Link>
-            
-            <button 
-              className="nav-button"
-              onClick={() => navigate(`/students/quiz/${quizId}/question/${questionNumber + 1}?review=true`)}
-              disabled={questionNumber >= totalQuestions}
-            >
-              Next
-            </button>
+          
+          <div className="flex justify-center mt-16">
+            <div className="w-40 h-40 rounded-full border-4 border-[var(--quiz-button-color)] flex items-center justify-center">
+              <span className="text-4xl font-bold text-[var(--quiz-button-color)]">20:00</span>
+            </div>
           </div>
-        ) : (
-          <div className="answer-actions">
-            <button 
-              className="nav-button"
-              onClick={() => navigate(`/students/quiz/${quizId}/question/${questionNumber - 1}`)}
-              disabled={questionNumber <= 1}
-            >
-              Previous
-            </button>
-            
-            <button 
-              className="submit-button"
-              onClick={handleSubmitAnswer}
-              disabled={selectedOption === null || isSaving}
-            >
-              {isSaving ? 'Saving...' : questionNumber < totalQuestions ? 'Next Question' : 'Finish Quiz'}
-            </button>
-          </div>
-        )}
-      </div>
-      
-      <div className="question-navigation-dots">
-        {Array.from({ length: totalQuestions }).map((_, index) => (
-          <Link 
-            key={index}
-            to={`/students/quiz/${quizId}/question/${index + 1}${isReviewMode ? '?review=true' : ''}`}
-            className={`nav-dot ${index + 1 === questionNumber ? 'active' : ''}`}
-          >
-            {index + 1}
-          </Link>
-        ))}
+        </div>
       </div>
     </div>
   );

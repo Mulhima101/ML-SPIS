@@ -1,32 +1,54 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 
 function StHeader() {
-  const [activePage, setActivePage] = useState({home: false, quizzes: false});
+  const location = useLocation();
+  const [activePage, setActivePage] = useState({ home: false, quiz: false });
 
   useEffect(() => {
-    const pathname = document.location.pathname;
-    if(pathname === "/"){
-      setActivePage(() => ({quizzes: false, home: true}));
-    } else if (pathname === "/students/quizzes"){
-      setActivePage(() => ({home: false, quizzes: true}));
+    const pathname = location.pathname;
+    if (pathname === "/" || pathname === "/students/dashboard") {
+      setActivePage({ home: true, quiz: false });
+    } else if (pathname.includes("/quiz") || pathname === "/students/quizzes") {
+      setActivePage({ home: false, quiz: true });
     } else {
-      setActivePage(() => ({home: false, quizzes: false}));
+      setActivePage({ home: false, quiz: false });
     }
-  });
+  }, [location]);
 
   return (
-    <header className="student-header flex justify-between bg-[var(--header-bg)] pt-4 px-4 mb-6">
-      <div className='flex [&>a]:px-5 [&>a]:py-3 [&>a]:leading-[40px] [&>a]:rounded-t-[20px]'>
-        <a href='/' className={`header-btn ${activePage.home? "active": ""}`}>Home</a>
-        <a href='/students/quizzes' className={`header-btn ${activePage.quizzes? "active": ""}`}>Quizzes</a>
+    <header className="flex justify-between items-center bg-[var(--secondary-background-color)] p-4">
+      <div className="flex space-x-4">
+        <Link 
+          to="/students/dashboard" 
+          className={`px-6 py-2 rounded-t-lg ${activePage.home ? 'bg-[var(--primary-background-color)]' : ''}`}
+        >
+          Home
+        </Link>
+        <Link 
+          to="/students/quizzes" 
+          className={`px-6 py-2 rounded-t-lg ${activePage.quiz ? 'bg-[var(--primary-background-color)]' : ''}`}
+        >
+          Quiz
+        </Link>
       </div>
-      <div className="header-actions mb-4">
-        <button className="logout-button">Logout</button>
-        <a href='/students/profile'><span className='w-[50px] h-[50px] bg-red-100 rounded-full'></span></a>
+      
+      <div className="flex items-center space-x-4">
+        <button 
+          onClick={() => {
+            localStorage.removeItem('studentUser');
+            window.location.href = '/students/login';
+          }}
+          className="text-sm"
+        >
+          Logout
+        </button>
+        <Link to="/students/profile">
+          <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+        </Link>
       </div>
     </header>
-  )
+  );
 }
 
 export default StHeader;

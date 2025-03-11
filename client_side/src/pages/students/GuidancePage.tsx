@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import '../../styles/guidance.css';
 
 import StHeader from '../../components/students/stHeader';
 
@@ -30,7 +29,6 @@ const GuidancePage: React.FC = () => {
   const [topicGuidance, setTopicGuidance] = useState<TopicGuidance[]>([]);
   const [learningPath, setLearningPath] = useState<LearningPath | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [activeTab, setActiveTab] = useState<'topics' | 'path'>('topics');
   
   useEffect(() => {
     // Mock fetching guidance data
@@ -40,76 +38,85 @@ const GuidancePage: React.FC = () => {
         setTimeout(() => {
           const mockTopicGuidance: TopicGuidance[] = [
             {
-              topic: 'SDLC',
+              topic: 'leo venenatis placerat',
               score: 0.8,
               status: 'strong',
               recommendations: [
                 {
                   type: 'resource',
-                  title: 'Advanced SDLC Concepts',
-                  description: 'Learn about advanced concepts in the Software Development Life Cycle.',
-                  link: '/resources/sdlc-advanced'
-                },
-                {
-                  type: 'practice',
-                  title: 'SDLC Case Studies',
-                  description: 'Review real-world case studies applying SDLC methodologies.',
-                  link: '/practice/sdlc-cases'
-                },
-                {
-                  type: 'goal',
-                  title: 'Maintain Strong Performance',
-                  description: 'Continue excelling in this topic by exploring more advanced concepts.'
+                  title: 'Advanced Concepts',
+                  description: 'Learn about advanced concepts in this area.',
+                  link: '/resources/advanced'
                 }
               ]
             },
             {
-              topic: 'Agile',
+              topic: 'Aliquam vel lacus volutpat',
               score: 0.65,
               status: 'moderate',
               recommendations: [
                 {
-                  type: 'resource',
-                  title: 'Agile Methodology Deep Dive',
-                  description: 'Comprehensive guide to Agile frameworks and practices.',
-                  link: '/resources/agile-deep-dive'
-                },
-                {
                   type: 'practice',
-                  title: 'Scrum Simulation',
-                  description: 'Interactive simulation of Scrum methodology in action.',
-                  link: '/practice/scrum-simulation'
-                },
-                {
-                  type: 'goal',
-                  title: 'Improve to Advanced Level',
-                  description: 'Focus on enhancing your knowledge of Agile ceremonies and roles.'
+                  title: 'Case Studies',
+                  description: 'Review real-world case studies.',
+                  link: '/practice/cases'
                 }
               ]
             },
             {
-              topic: 'OSI Model',
+              topic: 'non consectetur',
               score: 0.45,
               status: 'weak',
               recommendations: [
                 {
                   type: 'resource',
-                  title: 'OSI Model Fundamentals',
-                  description: 'Back-to-basics approach on understanding the OSI layers.',
-                  link: '/resources/osi-fundamentals'
-                },
-                {
-                  type: 'practice',
-                  title: 'OSI Layer Identification Quiz',
-                  description: 'Practice identifying which OSI layer various protocols belong to.',
-                  link: '/practice/osi-quiz'
-                },
-                {
-                  type: 'goal',
-                  title: 'Master the Basics',
-                  description: 'Focus on understanding the purpose and function of each OSI layer.'
+                  title: 'Fundamentals',
+                  description: 'Back-to-basics approach on understanding the core concepts.',
+                  link: '/resources/fundamentals'
                 }
               ]
+            },
+            {
+              topic: 'Vivamus bibendum',
+              score: 0.72,
+              status: 'moderate',
+              recommendations: []
+            },
+            {
+              topic: 'Suspendisse congue',
+              score: 0.38,
+              status: 'weak',
+              recommendations: []
+            },
+            {
+              topic: 'Nibh vitae laoreet pharetra',
+              score: 0.85,
+              status: 'strong',
+              recommendations: []
+            },
+            {
+              topic: 'Sed finibus dignissim',
+              score: 0.42,
+              status: 'weak',
+              recommendations: []
+            },
+            {
+              topic: 'Cras bibendum felis',
+              score: 0.68,
+              status: 'moderate',
+              recommendations: []
+            },
+            {
+              topic: 'vitae laoreet pharetra',
+              score: 0.78,
+              status: 'moderate',
+              recommendations: []
+            },
+            {
+              topic: 'Donec sollicitudin purus',
+              score: 0.35,
+              status: 'weak',
+              recommendations: []
             }
           ];
           
@@ -118,23 +125,13 @@ const GuidancePage: React.FC = () => {
             description: 'Your current knowledge level is Normal. This personalized learning path will help you strengthen your weak areas and advance to a High knowledge level.',
             milestones: [
               {
-                title: 'Master OSI Model Fundamentals',
-                description: 'Focus on understanding the purpose and function of each layer in the OSI model.',
+                title: 'Master Fundamentals',
+                description: 'Focus on understanding the purpose and function of each concept.',
                 isCompleted: false
               },
               {
-                title: 'Improve Agile Methodology Understanding',
-                description: 'Learn more about Agile ceremonies, roles, and practical applications.',
-                isCompleted: false
-              },
-              {
-                title: 'Apply SDLC in Projects',
-                description: 'Use your strong understanding of SDLC in practical project scenarios.',
-                isCompleted: true
-              },
-              {
-                title: 'Complete Advanced Network Engineering Quiz',
-                description: 'Test your improved knowledge with an advanced assessment.',
+                title: 'Improve Methodology Understanding',
+                description: 'Learn more about roles and practical applications.',
                 isCompleted: false
               }
             ]
@@ -153,138 +150,72 @@ const GuidancePage: React.FC = () => {
     fetchGuidanceData();
   }, []);
   
-  const getStatusColor = (status: string): string => {
-    switch(status) {
-      case 'weak': return 'red';
-      case 'moderate': return 'orange';
-      case 'strong': return 'green';
-      default: return 'gray';
-    }
-  };
-  
-  const getTypeIcon = (type: string): string => {
-    switch(type) {
-      case 'resource': return '📚';
-      case 'practice': return '🏋️';
-      case 'goal': return '🎯';
-      default: return '📝';
-    }
-  };
-  
   if (loading) {
-    return <div className="loading">Loading personalized guidance...</div>;
+    return (
+      <div className="min-h-screen bg-[var(--primary-background-color)] flex justify-center items-center">
+        <div className="loading">Loading personalized guidance...</div>
+      </div>
+    );
   }
   
   return (
-    <div className="guidance-container">
+    <div className="min-h-screen bg-[var(--primary-background-color)]">
       <StHeader />
       
-      <div className="guidance-tabs">
-        <button 
-          className={`tab-button ${activeTab === 'topics' ? 'active' : ''}`}
-          onClick={() => setActiveTab('topics')}
-        >
-          Topic-Based Guidance
-        </button>
-        <button 
-          className={`tab-button ${activeTab === 'path' ? 'active' : ''}`}
-          onClick={() => setActiveTab('path')}
-        >
-          Learning Path
-        </button>
-      </div>
-      
-      <div className="guidance-content">
-        {activeTab === 'topics' && (
-          <div className="topic-guidance">
-            <p className="guidance-intro">
-              Based on your quiz performances, we've analyzed your strengths and areas for improvement across different topics.
-              Below are personalized recommendations to help you enhance your knowledge in each area.
-            </p>
-            
+      <div className="container mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="lg:col-span-2 bg-white rounded-xl p-8 shadow-sm">
+          <h2 className="text-2xl font-bold mb-6">Guidance</h2>
+          
+          <p className="text-gray-700 mb-6">
+            Aliquam nulla diam, semper eu libero eget, dictum interdum mi. Vestibulum fringilla luctus hendrerit. 
+            Fusce auctor mi in elit tempor pretium et ac augue. Duis vitae mattis arcu, vel gravida dolor.
+          </p>
+          
+          <p className="text-gray-700 mb-6">
+            Nunc pulvinar mollis erat. Sed nec sapien nec ligula commodo auctor a id massa. Fusce vitae justo a 
+            turpis tincidunt tristique. In et nisi rutrum, sodales lectus sed, porttitor quam. Proin vitae eros eu purus 
+            hendrerit facilisis id vitae lacus. Etiam vehicula viverra venenatis. Nam sed orci tempus, molestie mi 
+            eget, volutpat libero. Sed finibus sagittis libero ac vehicula. Orci varius natoque penatibus et magnis 
+            dis parturient montes, nascetur ridiculus mus. Integer eleifend ligula in metus ultrices maximus.
+          </p>
+          
+          <p className="text-gray-700 mb-6">
+            Quisque id felis et mauris porta commodo non ac purus. Maecenas turpis nibh, faucibus ac convallis a, 
+            aliquet sit amet quam. Curabitur eu felis tempus urna laoreet vehicula nec nec metus. Duis ultricies 
+            commodo suscipit. Duis suscipit diam a lobortis porttitor. Etiam non magna euismod, dictum elit vel, 
+            luctus dolor.
+          </p>
+          
+          <p className="text-gray-700">
+            Quisque tristique molestie arcu. Fusce tincidunt dictum eros, tempus fermentum nunc ultrices eu. 
+            Proin in lacus eleifend, pharetra ipsum eget, lacinia elit. Class aptent taciti sociosqu ad litora torquent 
+            per conubia nostra, per inceptos himenaeos. Suspendisse potenti. Curabitur ac purus ut nulla 
+            bibendum efficitur. Morbi posuere, mauris id vestibulum malesuada, nisi velit ornare risus, et 
+            vestibulum elit libero non eros. Pellentesque habitant morbi tristique senectus et netus et malesuada 
+            fames ac turpis egestas. Nulla lacinia porttitor sem, eu rutrum ante luctus sit amet.
+          </p>
+        </div>
+        
+        <div className="bg-blue-600 rounded-xl p-6 shadow-sm text-white">
+          <h2 className="text-xl font-bold mb-6">Targets</h2>
+          
+          <div className="space-y-3">
             {topicGuidance.map(topic => (
-              <div key={topic.topic} className="topic-card">
-                <div className="topic-header">
-                  <h2>{topic.topic}</h2>
-                  <div 
-                    className="topic-status"
-                    style={{ color: getStatusColor(topic.status) }}
-                  >
-                    {topic.status.charAt(0).toUpperCase() + topic.status.slice(1)} 
-                    ({(topic.score * 100).toFixed(0)}%)
-                  </div>
-                </div>
-                
-                <div className="progress-bar-container">
-                  <div
-                    className="progress-bar"
-                    style={{ 
-                      width: `${topic.score * 100}%`,
-                      backgroundColor: getStatusColor(topic.status)
-                    }}
-                  ></div>
-                </div>
-                
-                <div className="recommendations-list">
-                  {topic.recommendations.map((rec, index) => (
-                    <div key={index} className="recommendation-item">
-                      <div className="recommendation-icon">{getTypeIcon(rec.type)}</div>
-                      <div className="recommendation-content">
-                        <h3>{rec.title}</h3>
-                        <p>{rec.description}</p>
-                        {rec.link && (
-                          <Link to={rec.link} className="recommendation-link">
-                            {rec.type === 'resource' ? 'View Resource' : 'Start Practice'}
-                          </Link>
-                        )}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              <div 
+                key={topic.topic}
+                className={`p-3 rounded-md ${
+                  topic.status === 'strong' 
+                    ? 'bg-green-500' 
+                    : topic.status === 'moderate'
+                      ? 'bg-blue-400'
+                      : 'bg-red-400'
+                }`}
+              >
+                {topic.topic}
               </div>
             ))}
           </div>
-        )}
-        
-        {activeTab === 'path' && learningPath && (
-          <div className="learning-path">
-            <div className="path-header">
-              <h2>Your Personalized Learning Path</h2>
-              <div className="knowledge-level">
-                Current Level: <span className="level-badge">{learningPath.level}</span>
-              </div>
-            </div>
-            
-            <p className="path-description">{learningPath.description}</p>
-            
-            <div className="milestones-container">
-              {learningPath.milestones.map((milestone, index) => (
-                <div 
-                  key={index} 
-                  className={`milestone-card ${milestone.isCompleted ? 'completed' : ''}`}
-                >
-                  <div className="milestone-number">{index + 1}</div>
-                  <div className="milestone-content">
-                    <h3>{milestone.title}</h3>
-                    <p>{milestone.description}</p>
-                  </div>
-                  <div className="milestone-status">
-                    {milestone.isCompleted ? '✓ Completed' : 'Pending'}
-                  </div>
-                </div>
-              ))}
-            </div>
-            
-            <div className="path-actions">
-              <Link to="/students/quiz/next-recommended" className="button primary">
-                Take Recommended Quiz
-              </Link>
-              <button className="button">
-                Download Learning Path
-              </button>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );
