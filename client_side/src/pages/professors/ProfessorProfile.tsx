@@ -1,108 +1,65 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-
-interface Professor {
-  firstName: string;
-  lastName: string;
-  email: string;
-  honorifics: string;
-  faculty: string;
-  profileImage?: string;
-}
+import { useNavigate } from 'react-router-dom';
 
 const ProfessorProfile: React.FC = () => {
-  const [professor, setProfessor] = useState<Professor | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  
-  useEffect(() => {
-    // Mock fetching professor data
-    const fetchProfessorData = async () => {
-      try {
-        // In a real app, this would be an API call
-        setTimeout(() => {
-          // Get data from localStorage or mock it
-          const storedUser = JSON.parse(localStorage.getItem('professorUser') || '{}');
-          
-          const mockProfessor: Professor = {
-            firstName: storedUser.firstName || 'Harsha',
-            lastName: storedUser.lastName || 'Nirmaral',
-            email: storedUser.email || 'professor231@gmail.com',
-            honorifics: storedUser.honorifics || 'Prof.',
-            faculty: storedUser.faculty || 'Software Engineer'
-          };
-          
-          setProfessor(mockProfessor);
-          setLoading(false);
-        }, 1000);
-      } catch (error) {
-        console.error('Error fetching professor data:', error);
-        setLoading(false);
-      }
-    };
-    
-    fetchProfessorData();
-  }, []);
-  
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-[var(--primary-background-color)] flex justify-center items-center">
-        <div className="loading">Loading profile data...</div>
-      </div>
-    );
-  }
-  
-  if (!professor) {
-    return (
-      <div className="min-h-screen bg-[var(--primary-background-color)] flex justify-center items-center">
-        <div className="text-red-600">Professor profile not found</div>
-      </div>
-    );
-  }
-  
+  const navigate = useNavigate();
+  const [professorData, setProfessorData] = useState({
+    firstName: 'Harsha',
+    lastName: 'Nirmaral',
+    honorifics: 'Prof.',
+    emailId: 'professor231@gmail.com',
+    faculty: 'Software Engineer'
+  });
+
+  const handleLogout = () => {
+    localStorage.removeItem('professorUser');
+    navigate('/professors/login');
+  };
+
   return (
-    <div className="min-h-screen bg-[var(--primary-background-color)]">
-      <header className="bg-[var(--secondary-background-color)] p-4 flex justify-between items-center">
-        <a href="/professors" className="text-lg font-medium">Students</a>
+    <div className="min-h-screen bg-[var(--secondary-background-color)] p-6">
+      <header className="flex justify-between items-center mb-8">
+        <h1 className="text-lg font-medium">Students</h1>
         <div className="flex items-center gap-4">
-          <button className="text-sm">Logout</button>
+          <button 
+            onClick={handleLogout} 
+            className="text-sm"
+          >
+            Logout
+          </button>
           <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
         </div>
       </header>
-      
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex justify-center mb-8">
-          <div className="w-32 h-32 bg-gray-300 rounded-full"></div>
+
+      <div className="max-w-md mx-auto bg-white rounded-lg shadow-sm p-6">
+        <div className="flex justify-center mb-6">
+          <div className="w-24 h-24 bg-gray-300 rounded-full"></div>
         </div>
         
-        <div className="bg-[var(--secondary-background-color)] rounded-lg p-6 max-w-md mx-auto mb-6">
-          <h2 className="text-xl font-bold mb-2">Professor Name</h2>
-          <p className="text-gray-600 mb-6">Professor ID</p>
+        <div className="space-y-4">
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">First Name</label>
+            <p className="text-lg">{professorData.firstName}</p>
+          </div>
           
-          <div className="space-y-4">
-            <div>
-              <p className="font-medium">First Name</p>
-              <p className="text-gray-700">{professor.firstName}</p>
-            </div>
-            
-            <div>
-              <p className="font-medium">Last Name</p>
-              <p className="text-gray-700">{professor.lastName}</p>
-            </div>
-            
-            <div>
-              <p className="font-medium">Honorifics</p>
-              <p className="text-gray-700">{professor.honorifics}</p>
-            </div>
-            
-            <div>
-              <p className="font-medium">Email ID</p>
-              <p className="text-gray-700">{professor.email}</p>
-            </div>
-            
-            <div>
-              <p className="font-medium">Faculty</p>
-              <p className="text-gray-700">{professor.faculty}</p>
-            </div>
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">Last Name</label>
+            <p className="text-lg">{professorData.lastName}</p>
+          </div>
+          
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">Honorifics</label>
+            <p className="text-lg">{professorData.honorifics}</p>
+          </div>
+          
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">Email ID</label>
+            <p className="text-lg">{professorData.emailId}</p>
+          </div>
+          
+          <div>
+            <label className="block text-sm text-gray-600 mb-1">Faculty</label>
+            <p className="text-lg">{professorData.faculty}</p>
           </div>
         </div>
       </div>

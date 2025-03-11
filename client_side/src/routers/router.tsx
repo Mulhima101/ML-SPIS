@@ -1,3 +1,4 @@
+// src/routers/router.tsx
 import { createBrowserRouter } from 'react-router-dom';
 import MainLayout from '../layouts/main';
 
@@ -16,7 +17,10 @@ import ProfessorLogin from '../pages/professors/ProfessorLogin';
 import ProfessorRegistration from '../pages/professors/ProfessorRegistration';
 import ProfessorProfile from '../pages/professors/ProfessorProfile';
 import StudentDetails from '../pages/professors/StudentDetails';
-import StudentsList from '../pages/professors/StudentsList'; // Add this import
+import StudentsList from '../pages/professors/StudentsList';
+
+// Privacy Policy Page
+import PrivacyPolicy from '../pages/PrivacyPolicy';
 
 const router = createBrowserRouter([
   {
@@ -27,6 +31,10 @@ const router = createBrowserRouter([
       {
         path: '/',
         element: <StudentDashboard />,
+      },
+      {
+        path: '/privacy-policy',
+        element: <PrivacyPolicy />,
       },
       
       // Student routes
@@ -82,7 +90,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/professors/students',
-        element: <StudentsList />, // Updated to the new component
+        element: <StudentsList />,
       },
       {
         path: '/professors/student/:studentId',

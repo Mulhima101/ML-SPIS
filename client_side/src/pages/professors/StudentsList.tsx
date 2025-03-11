@@ -1,5 +1,6 @@
+// src/pages/professors/StudentsList.tsx
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 interface Student {
   id: string;
@@ -14,6 +15,7 @@ interface Student {
 }
 
 const StudentsList: React.FC = () => {
+  const navigate = useNavigate();
   const [students, setStudents] = useState<Student[]>([]);
   const [filteredStudents, setFilteredStudents] = useState<Student[]>([]);
   const [filters, setFilters] = useState({
@@ -25,6 +27,13 @@ const StudentsList: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   
   useEffect(() => {
+    // Check if user is authenticated
+    const professorUser = localStorage.getItem('professorUser');
+    if (!professorUser) {
+      navigate('/professors/login');
+      return;
+    }
+
     // Mock fetching students data
     const fetchStudents = async () => {
       try {
@@ -33,7 +42,7 @@ const StudentsList: React.FC = () => {
           const mockStudents: Student[] = [
             {
               id: 'std1',
-              name: 'Student Name',
+              name: 'John Doe',
               faculty: 'Software Engineer',
               intakeNo: '6',
               academicYear: '2024',
@@ -44,7 +53,7 @@ const StudentsList: React.FC = () => {
             },
             {
               id: 'std2',
-              name: 'Student Name',
+              name: 'Jane Smith',
               faculty: 'Network Engineer',
               intakeNo: '6',
               academicYear: '2024',
@@ -66,7 +75,7 @@ const StudentsList: React.FC = () => {
     };
     
     fetchStudents();
-  }, []);
+  }, [navigate]);
   
   // Filter students when filters change
   useEffect(() => {
@@ -98,6 +107,11 @@ const StudentsList: React.FC = () => {
       [name]: value
     }));
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem('professorUser');
+    navigate('/professors/login');
+  };
   
   if (loading) {
     return (
@@ -110,9 +124,14 @@ const StudentsList: React.FC = () => {
   return (
     <div className="min-h-screen bg-[var(--primary-background-color)]">
       <header className="bg-[var(--secondary-background-color)] p-4 flex justify-between items-center">
-        <a href="/professors" className="text-lg font-medium">Students</a>
+        <h1 className="text-lg font-medium">Students</h1>
         <div className="flex items-center gap-4">
-          <button className="text-sm">Logout</button>
+          <button 
+            onClick={handleLogout} 
+            className="text-sm"
+          >
+            Logout
+          </button>
           <div className="w-10 h-10 bg-gray-300 rounded-full"></div>
         </div>
       </header>
@@ -177,31 +196,37 @@ const StudentsList: React.FC = () => {
           
           <div className="space-y-4">
             {filteredStudents.map(student => (
-              <div key={student.id} className="bg-white rounded-lg p-6 shadow-sm">
-                <div className="grid grid-cols-12 gap-4 items-center">
-                  <div className="col-span-6">
-                    <h2 className="text-lg font-semibold">{student.name}</h2>
-                    <p className="text-gray-600">Student Id</p>
-                    <p className="mt-2">Faculty</p>
-                    <p>Intake No</p>
-                    <p>Academic Year</p>
-                  </div>
-                  
-                  <div className="col-span-6 text-right">
-                    <div className="flex justify-end items-center gap-16">
-                      <div>
-                        <p className="font-medium">Number of Quiz</p>
-                        <p className="text-3xl font-bold">{student.quizzes.total}</p>
-                      </div>
-                      
-                      <div>
-                        <p className="font-medium">Number of Targets</p>
-                        <p className="text-3xl font-bold">{student.quizzes.targets}</p>
+              <Link 
+                key={student.id} 
+                to={`/professors/student/${student.id}`} 
+                className="block hover:bg-gray-50 transition"
+              >
+                <div className="bg-white rounded-lg p-6 shadow-sm">
+                  <div className="grid grid-cols-12 gap-4 items-center">
+                    <div className="col-span-6">
+                      <h2 className="text-lg font-semibold">{student.name}</h2>
+                      <p className="text-gray-600">Student Id</p>
+                      <p className="mt-2">Faculty</p>
+                      <p>Intake No</p>
+                      <p>Academic Year</p>
+                    </div>
+                    
+                    <div className="col-span-6 text-right">
+                      <div className="flex justify-end items-center gap-16">
+                        <div>
+                          <p className="font-medium">Number of Quiz</p>
+                          <p className="text-3xl font-bold">{student.quizzes.total}</p>
+                        </div>
+                        
+                        <div>
+                          <p className="font-medium">Number of Targets</p>
+                          <p className="text-3xl font-bold">{student.quizzes.targets}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
