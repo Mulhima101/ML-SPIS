@@ -1,3 +1,4 @@
+// src/pages/professors/ProfessorRegistration.tsx
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -9,24 +10,34 @@ const ProfessorRegistration: React.FC = () => {
     email: '',
     faculty: 'Software Engineer',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    agreeToTerms: false
   });
   const [error, setError] = useState<string>('');
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    const { name, value, type } = e.target;
+    
+    if (type === 'checkbox') {
+      const target = e.target as HTMLInputElement;
+      setFormData(prev => ({
+        ...prev,
+        [name]: target.checked
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: value
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
-    const { firstName, lastName, honorifics, email, faculty, password, confirmPassword } = formData;
+    const { firstName, lastName, honorifics, email, faculty, password, confirmPassword, agreeToTerms } = formData;
 
     // Basic validation
     if (!firstName || !lastName || !honorifics || !email || !faculty || !password || !confirmPassword) {
@@ -36,6 +47,11 @@ const ProfessorRegistration: React.FC = () => {
 
     if (password !== confirmPassword) {
       setError('Passwords do not match');
+      return;
+    }
+
+    if (!agreeToTerms) {
+      setError('You must agree to the terms and conditions');
       return;
     }
 
@@ -59,11 +75,11 @@ const ProfessorRegistration: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--primary-background-color)]">
+    <div className="min-h-screen flex items-center justify-center bg-[#faeec9]">
       <div className="flex w-full max-w-4xl rounded-2xl overflow-hidden shadow-xl">
         <div className="w-2/5 bg-amber-300 flex items-center justify-center p-12">
           <div className="text-center">
-          <h2 className="text-2xl font-bold">
+            <h2 className="text-2xl font-bold">
               <span className="text-xl">Machine Learning Based </span>
               <br />
               <span className="text-2xl">Student Progress</span>
@@ -73,7 +89,7 @@ const ProfessorRegistration: React.FC = () => {
           </div>
         </div>
         
-        <div className="w-3/5 bg-[var(--secondary-background-color)] p-12 relative">
+        <div className="w-3/5 bg-[#fcfaed] p-12 relative">
           <div className="absolute top-4 right-4 text-2xl cursor-pointer">×</div>
           
           <h2 className="text-2xl font-bold mb-8 text-center">Professor Registration</h2>
@@ -185,11 +201,14 @@ const ProfessorRegistration: React.FC = () => {
             <div className="flex items-center">
               <input 
                 type="checkbox" 
+                name="agreeToTerms"
+                checked={formData.agreeToTerms}
+                onChange={handleChange}
                 id="terms" 
                 className="mr-2"
                 required
               />
-              <label htmlFor="terms" className="text-sm">I Agree to Team & Conditions</label>
+              <label htmlFor="terms" className="text-sm">I Agree to Terms & Conditions</label>
             </div>
             
             <button 
@@ -198,6 +217,10 @@ const ProfessorRegistration: React.FC = () => {
             >
               Sign Up
             </button>
+
+            <div className="mt-4 text-center text-sm">
+              <Link to="/professors/login" className="text-amber-600">Already have an account? Login</Link>
+            </div>
           </form>
         </div>
       </div>

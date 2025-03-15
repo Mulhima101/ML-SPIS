@@ -13,7 +13,6 @@ const StudentLogin: React.FC = () => {
 
     try {
       // This would normally connect to your backend API
-      // For now, we'll simulate a successful login
       console.log('Logging in with:', { email, password });
       
       // Mock successful login
@@ -32,7 +31,7 @@ const StudentLogin: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--primary-background-color)]">
+    <div className="min-h-screen flex items-center justify-center bg-[#faeec9]">
       <div className="flex w-full max-w-4xl rounded-2xl overflow-hidden shadow-xl">
         <div className="w-2/5 bg-amber-300 flex items-center justify-center p-12">
           <div className="text-center">
@@ -46,7 +45,7 @@ const StudentLogin: React.FC = () => {
           </div>
         </div>
         
-        <div className="w-3/5 bg-[var(--secondary-background-color)] p-12 relative">
+        <div className="w-3/5 bg-[#fcfaed] p-12 relative">
           <div className="absolute top-4 right-4 text-2xl cursor-pointer">×</div>
           
           <h2 className="text-2xl font-bold mb-8 text-center">Student Login</h2>
@@ -64,7 +63,7 @@ const StudentLogin: React.FC = () => {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="stduent231@gmail.com"
+                placeholder="student231@gmail.com"
                 className="w-full p-3 border border-gray-300 rounded-lg"
                 required
               />

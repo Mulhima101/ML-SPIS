@@ -1,3 +1,4 @@
+// src/pages/students/QuizAllPage.tsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
@@ -91,20 +92,20 @@ const QuizAllPage: React.FC = () => {
   
   if (loading) {
     return (
-      <div className="min-h-screen bg-[var(--primary-background-color)] flex justify-center items-center">
+      <div className="min-h-screen bg-[#faeec9] flex justify-center items-center">
         <div className="loading">Loading quizzes...</div>
       </div>
     );
   }
   
   return (
-    <div className="min-h-screen bg-[var(--primary-background-color)]">
+    <div className="min-h-screen bg-[#faeec9]">
       <StHeader />
       
       <div className="container mx-auto px-4 py-6">
         <h1 className="text-2xl font-bold mb-6">Quiz</h1>
         
-        <div className="space-y-6">
+        <div className="space-y-4">
           {quizzes.map(quiz => (
             <div 
               key={quiz.id} 
@@ -127,7 +128,7 @@ const QuizAllPage: React.FC = () => {
                 
                 <div className="text-right">
                   <p className="text-gray-700">
-                    {quiz.status === 'completed' ? 'Pass' : quiz.status === 'completed' && quiz.score === 0 ? 'Fail' : ''}
+                    {quiz.status === 'completed' ? quiz.score === 0 ? 'Fail' : 'Pass' : ''}
                   </p>
                   <p className="text-gray-700">{quiz.questionCount}/{quiz.questionCount}</p>
                   <p className="text-gray-700">Start At: {quiz.startTime}</p>

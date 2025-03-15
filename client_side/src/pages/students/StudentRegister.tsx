@@ -1,4 +1,3 @@
-// src/pages/students/StudentRegister.tsx
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -79,23 +78,23 @@ const StudentRegister: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--primary-background-color)]">
+    <div className="min-h-screen flex items-center justify-center bg-[#faeec9]">
       <div className="flex w-full max-w-4xl rounded-2xl overflow-hidden shadow-xl">
         {/* Left Side */}
         <div className="w-2/5 bg-amber-300 flex items-center justify-center p-12">
           <div className="text-center">
             <h2 className="text-2xl font-bold">
-              <span className="text-xl">Machine Learning</span>
+              <span className="text-xl">Machine Learning Based </span>
               <br />
-              Based Student Improvement
+              <span className="text-2xl">Student Progress</span>
               <br />
-              System
+              <span className="text-2xl">Improvement System</span>
             </h2>
           </div>
         </div>
         
         {/* Right Side */}
-        <div className="w-3/5 bg-[var(--secondary-background-color)] p-12 relative">
+        <div className="w-3/5 bg-[#fcfaed] p-12 relative">
           <div className="absolute top-4 right-4 text-2xl cursor-pointer">×</div>
           
           <h2 className="text-2xl font-bold mb-6 text-center">Student Registration</h2>
@@ -115,7 +114,7 @@ const StudentRegister: React.FC = () => {
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
-                  placeholder="Harsha"
+                  placeholder="Mulhima"
                   className="w-full p-2 border border-gray-300 rounded-lg text-sm"
                   required
                 />
@@ -128,7 +127,7 @@ const StudentRegister: React.FC = () => {
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
-                  placeholder="Nirmaral"
+                  placeholder="Jawahir"
                   className="w-full p-2 border border-gray-300 rounded-lg text-sm"
                   required
                 />
@@ -230,7 +229,7 @@ const StudentRegister: React.FC = () => {
                 className="mr-2"
                 required
               />
-              <label className="text-sm text-gray-700">I Agree to Team & Conditions</label>
+              <label className="text-sm text-gray-700">I Agree to Terms & Conditions</label>
             </div>
             
             <button 

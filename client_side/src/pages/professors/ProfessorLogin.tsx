@@ -1,3 +1,4 @@
+// src/pages/professors/ProfessorLogin.tsx
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -31,7 +32,7 @@ const ProfessorLogin: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[var(--primary-background-color)]">
+    <div className="min-h-screen flex items-center justify-center bg-[#faeec9]">
       <div className="flex w-full max-w-4xl rounded-2xl overflow-hidden shadow-xl">
         <div className="w-2/5 bg-amber-300 flex items-center justify-center p-12">
           <div className="text-center">
@@ -45,7 +46,7 @@ const ProfessorLogin: React.FC = () => {
           </div>
         </div>
         
-        <div className="w-3/5 bg-[var(--secondary-background-color)] p-12 relative">
+        <div className="w-3/5 bg-[#fcfaed] p-12 relative">
           <div className="absolute top-4 right-4 text-2xl cursor-pointer">×</div>
           
           <h2 className="text-2xl font-bold mb-8 text-center">Professor Login</h2>

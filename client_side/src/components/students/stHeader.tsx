@@ -1,3 +1,4 @@
+// src/components/students/stHeader.tsx
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -17,29 +18,29 @@ function StHeader() {
   }, [location]);
 
   return (
-    <header className="flex justify-between items-center bg-[var(--secondary-background-color)] p-4">
-      <div className="flex space-x-4">
+    <header className="flex justify-between items-center bg-[#fcfaed] p-0 shadow-sm">
+      <div className="flex">
         <Link 
           to="/students/dashboard" 
-          className={`px-6 py-2 rounded-t-lg ${activePage.home ? 'bg-[var(--primary-background-color)]' : ''}`}
+          className={`px-12 py-4 font-medium ${activePage.home ? 'bg-[#faeec9] text-black' : 'text-gray-700'}`}
         >
           Home
         </Link>
         <Link 
           to="/students/quizzes" 
-          className={`px-6 py-2 rounded-t-lg ${activePage.quiz ? 'bg-[var(--primary-background-color)]' : ''}`}
+          className={`px-12 py-4 font-medium ${activePage.quiz ? 'bg-[#faeec9] text-black' : 'text-gray-700'}`}
         >
           Quiz
         </Link>
       </div>
       
-      <div className="flex items-center space-x-4">
+      <div className="flex items-center gap-4 pr-4">
         <button 
           onClick={() => {
             localStorage.removeItem('studentUser');
             window.location.href = '/students/login';
           }}
-          className="text-sm"
+          className="text-sm font-medium text-gray-700"
         >
           Logout
         </button>

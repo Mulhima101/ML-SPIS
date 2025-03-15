@@ -1,4 +1,3 @@
-// src/pages/students/QuizPage.tsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import '../../styles/quiz.css';
@@ -31,16 +30,25 @@ const QuizPage: React.FC = () => {
   const [timeRemaining, setTimeRemaining] = useState<number>(1200); // 20 minutes in seconds
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   
+  // Effect for loading quiz data
   useEffect(() => {
-    // Mock fetching quiz data
+    console.log("Starting to fetch quiz with ID:", quizId);
+    
     const fetchQuiz = async () => {
       try {
-        // In a real app, this would be an API call
+        // This would be replaced with an actual API call
+        console.log("Fetching quiz data for quiz ID:", quizId);
+        
+        // Simulating API delay
         setTimeout(() => {
+          console.log("Creating mock quiz data");
+          
+          // Mock quiz data
           const mockQuiz: Quiz = {
             id: quizId || 'default',
-            title: 'What is Lorem Ipsum.',
+            title: 'Orci varius natoque penatibus',
             description: 'This quiz tests your knowledge of software engineering fundamentals.',
             timeLimit: 20, // 20 minutes
             questions: [
@@ -227,22 +235,37 @@ const QuizPage: React.FC = () => {
             ]
           };
           
+          console.log("Quiz data ready:", mockQuiz);
           setQuiz(mockQuiz);
           setTimeRemaining(mockQuiz.timeLimit * 60); // Convert to seconds
           setLoading(false);
-        }, 1000);
+        }, 1500);
       } catch (error) {
         console.error('Error fetching quiz:', error);
+        setError('Failed to load quiz data. Please try again.');
         setLoading(false);
       }
     };
     
     fetchQuiz();
+    
+    // Add a timeout for loading
+    const timeoutId = setTimeout(() => {
+      if (loading) {
+        console.log("Loading timeout reached");
+        setLoading(false);
+        setError('Quiz is taking too long to load. Please refresh the page and try again.');
+      }
+    }, 8000); // 8 seconds timeout
+    
+    return () => clearTimeout(timeoutId);
   }, [quizId]);
   
   // Timer effect
   useEffect(() => {
     if (!quiz || timeRemaining <= 0) return;
+    
+    console.log("Starting timer with remaining time:", timeRemaining);
     
     const timer = setInterval(() => {
       setTimeRemaining(prev => {
@@ -255,10 +278,14 @@ const QuizPage: React.FC = () => {
       });
     }, 1000);
     
-    return () => clearInterval(timer);
+    return () => {
+      console.log("Clearing timer");
+      clearInterval(timer);
+    };
   }, [quiz, timeRemaining]);
   
   const handleOptionSelect = (questionId: string, optionIndex: number) => {
+    console.log(`Selected option ${optionIndex} for question ${questionId}`);
     setSelectedAnswers(prev => ({
       ...prev,
       [questionId]: optionIndex
@@ -267,12 +294,14 @@ const QuizPage: React.FC = () => {
   
   const handleNextQuestion = () => {
     if (quiz && currentQuestionIndex < quiz.questions.length - 1) {
+      console.log(`Moving to next question: ${currentQuestionIndex + 1}`);
       setCurrentQuestionIndex(prev => prev + 1);
     }
   };
   
   const handlePrevQuestion = () => {
     if (currentQuestionIndex > 0) {
+      console.log(`Moving to previous question: ${currentQuestionIndex - 1}`);
       setCurrentQuestionIndex(prev => prev - 1);
     }
   };
@@ -280,6 +309,7 @@ const QuizPage: React.FC = () => {
   const handleSubmitQuiz = async () => {
     if (!quiz) return;
     
+    console.log("Submitting quiz");
     setIsSubmitting(true);
     
     try {
@@ -315,15 +345,14 @@ const QuizPage: React.FC = () => {
       else if (overallScore < 0.8) knowledgeLevel = 'Normal';
       else knowledgeLevel = 'High';
       
-      // Mock saving results to backend
-      console.log('Quiz submitted with results:', {
-        quizId,
+      console.log('Quiz results calculated:', {
         overallScore,
         topicScores: topicScoresNormalized,
         knowledgeLevel
       });
       
-      // Navigate to results page
+      // In a real app, you would send this to your backend API
+      // For now, navigate to results page with the data
       navigate(`/students/quiz-result/${quizId}`, { 
         state: { 
           overallScore,
@@ -333,6 +362,7 @@ const QuizPage: React.FC = () => {
       });
     } catch (error) {
       console.error('Error submitting quiz:', error);
+      setError('Failed to submit quiz. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -345,11 +375,55 @@ const QuizPage: React.FC = () => {
   };
   
   if (loading) {
-    return <div className="loading">Loading quiz...</div>;
+    return (
+      <div className="min-h-screen bg-[#faeec9] flex flex-col justify-center items-center">
+        <StHeader />
+        <div className="mt-20 text-center">
+          <div className="text-xl font-semibold mb-4">Loading quiz...</div>
+          <div className="w-16 h-16 border-4 border-amber-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#faeec9] flex flex-col">
+        <StHeader />
+        <div className="flex-1 flex justify-center items-center">
+          <div className="bg-white rounded-lg shadow-md p-8 max-w-md">
+            <div className="text-red-600 font-semibold text-xl mb-4">Error</div>
+            <p className="mb-6">{error}</p>
+            <button 
+              onClick={() => window.location.reload()}
+              className="bg-amber-600 text-white px-4 py-2 rounded"
+            >
+              Refresh Page
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
   
   if (!quiz) {
-    return <div className="quiz-error">Quiz not found</div>;
+    return (
+      <div className="min-h-screen bg-[#faeec9] flex flex-col">
+        <StHeader />
+        <div className="flex-1 flex justify-center items-center">
+          <div className="bg-white rounded-lg shadow-md p-8 max-w-md">
+            <div className="text-red-600 font-semibold text-xl mb-4">Quiz Not Found</div>
+            <p className="mb-6">The quiz you're looking for could not be found. It may have been removed or you may have the wrong URL.</p>
+            <button 
+              onClick={() => navigate('/students/quizzes')}
+              className="bg-amber-600 text-white px-4 py-2 rounded"
+            >
+              Back to Quizzes
+            </button>
+          </div>
+        </div>
+      </div>
+    );
   }
   
   const currentQuestion = quiz.questions[currentQuestionIndex];
@@ -362,15 +436,15 @@ const QuizPage: React.FC = () => {
   });
   
   return (
-    <div className="bg-[var(--primary-background-color)] min-h-screen">
+    <div className="min-h-screen bg-[#faeec9]">
       <StHeader />
       
-      <div className="max-w-screen-xl mx-auto px-4 py-6">
+      <div className="max-w-screen-xl mx-auto p-4">
         <h1 className="text-2xl font-bold text-center mb-6">{quiz.title}</h1>
         
-        <div className="flex">
+        <div className="flex gap-4">
           {/* Left side - Question */}
-          <div className="w-2/3 pr-4">
+          <div className="w-2/3">
             <div className="bg-amber-200 rounded-2xl p-8 min-h-[600px] flex flex-col justify-between">
               <div>
                 <h2 className="text-xl mb-6">
@@ -381,7 +455,8 @@ const QuizPage: React.FC = () => {
                   {currentQuestion.options.map((option, index) => (
                     <button
                       key={index}
-                      className="w-full p-4 bg-white rounded-lg text-left hover:bg-gray-50"
+                      className={`w-full p-4 bg-white rounded-lg text-left hover:bg-gray-50 
+                        ${selectedAnswers[currentQuestion.id] === index ? 'ring-2 ring-amber-500' : ''}`}
                       onClick={() => handleOptionSelect(currentQuestion.id, index)}
                     >
                       {option}
@@ -391,28 +466,25 @@ const QuizPage: React.FC = () => {
               </div>
               
               <div className="flex justify-between">
-                {currentQuestionIndex > 0 ? (
-                  <button 
-                    className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg"
-                    onClick={handlePrevQuestion}
-                  >
-                    ← Previous
-                  </button>
-                ) : (
-                  <button 
-                    className="bg-gray-200 text-gray-400 px-6 py-2 rounded-lg opacity-50 cursor-not-allowed"
-                    disabled
-                  >
-                    ← Previous
-                  </button>
-                )}
+                <button 
+                  className={`px-6 py-2 rounded-lg ${
+                    currentQuestionIndex > 0 
+                      ? 'bg-gray-700 text-white' 
+                      : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  }`}
+                  onClick={handlePrevQuestion}
+                  disabled={currentQuestionIndex === 0}
+                >
+                  ← Previous
+                </button>
                 
                 {isLastQuestion ? (
                   <button 
-                    className="bg-green-500 text-white px-8 py-2 rounded-lg"
+                    className="bg-green-500 text-white px-6 py-2 rounded-lg"
                     onClick={handleSubmitQuiz}
+                    disabled={isSubmitting}
                   >
-                    Submit →
+                    {isSubmitting ? 'Submitting...' : 'Submit →'}
                   </button>
                 ) : (
                   <button 
@@ -427,20 +499,21 @@ const QuizPage: React.FC = () => {
           </div>
           
           {/* Right side - Question numbers and timer */}
-          <div className="w-1/3 pl-4">
+          <div className="w-1/3">
             <div className="bg-amber-100 rounded-2xl p-6 min-h-[600px] flex flex-col">
               <h3 className="text-xl font-semibold mb-6">Question Numbers</h3>
               
               <div className="grid grid-cols-5 gap-4 mb-auto">
-                {Array.from({ length: 15 }, (_, i) => {
+                {Array.from({ length: quiz.questions.length }, (_, i) => {
                   // Set button color based on status
                   let bgColor = "bg-amber-200"; // Default
                   
-                  if (i === currentQuestionIndex) {
+                  if (i === currentQuestionIndex && answeredQuestions.includes(i)) {
+                    bgColor = "bg-green-500 text-white"; // Current and answered
+                  } else if (i === currentQuestionIndex) {
                     bgColor = "bg-red-500 text-white"; // Current question
                   } else if (answeredQuestions.includes(i)) {
-                    // For Image 2, show green for answered but not current questions
-                    bgColor = "bg-green-500 text-white";
+                    bgColor = "bg-green-500 text-white"; // Answered
                   }
                   
                   return (
