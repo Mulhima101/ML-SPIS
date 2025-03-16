@@ -17,13 +17,13 @@ const ProfessorProfile: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[var(--secondary-background-color)] p-6">
-      <header className="flex justify-between items-center mb-8">
+    <div className="min-h-screen bg-[#FEF8DD]">
+      <header className="flex justify-between items-center p-6">
         <h1 className="text-lg font-medium">Students</h1>
         <div className="flex items-center gap-4">
           <button 
             onClick={handleLogout} 
-            className="text-sm"
+            className="text-sm font-medium"
           >
             Logout
           </button>
@@ -31,35 +31,41 @@ const ProfessorProfile: React.FC = () => {
         </div>
       </header>
 
-      <div className="max-w-md mx-auto bg-white rounded-lg shadow-sm p-6">
-        <div className="flex justify-center mb-6">
-          <div className="w-24 h-24 bg-gray-300 rounded-full"></div>
-        </div>
+      <div className="flex flex-col items-center justify-center mt-8">
+        <div className="w-24 h-24 bg-gray-300 rounded-full mb-4"></div>
+        <h2 className="text-xl font-medium">Professor Name</h2>
+        <p className="text-gray-600 mb-8">Professor ID</p>
         
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">First Name</label>
-            <p className="text-lg">{professorData.firstName}</p>
+        <div className="w-full max-w-3xl flex flex-wrap justify-center gap-8 px-4">
+          <div className="bg-white rounded-xl shadow-md p-6 w-full max-w-xs">
+            <div className="space-y-4">
+              <div>
+                <p className="text-gray-500 text-sm">First Name</p>
+                <p className="font-medium">{professorData.firstName}</p>
+              </div>
+              
+              <div>
+                <p className="text-gray-500 text-sm">Last Name</p>
+                <p className="font-medium">{professorData.lastName}</p>
+              </div>
+              
+              <div>
+                <p className="text-gray-500 text-sm">Honorifics</p>
+                <p className="font-medium">{professorData.honorifics}</p>
+              </div>
+              
+              <div>
+                <p className="text-gray-500 text-sm">Email ID</p>
+                <p className="font-medium">{professorData.emailId}</p>
+              </div>
+            </div>
           </div>
           
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">Last Name</label>
-            <p className="text-lg">{professorData.lastName}</p>
-          </div>
-          
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">Honorifics</label>
-            <p className="text-lg">{professorData.honorifics}</p>
-          </div>
-          
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">Email ID</label>
-            <p className="text-lg">{professorData.emailId}</p>
-          </div>
-          
-          <div>
-            <label className="block text-sm text-gray-600 mb-1">Faculty</label>
-            <p className="text-lg">{professorData.faculty}</p>
+          <div className="bg-white rounded-xl shadow-md p-6 w-full max-w-xs">
+            <div>
+              <p className="text-gray-500 text-sm">Faculty</p>
+              <p className="font-medium">{professorData.faculty}</p>
+            </div>
           </div>
         </div>
       </div>
