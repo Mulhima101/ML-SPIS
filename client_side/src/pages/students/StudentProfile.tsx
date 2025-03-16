@@ -170,6 +170,17 @@ const StudentProfile: React.FC = () => {
                   className="w-full p-2 border border-gray-300 rounded-md"
                 />
               </div>
+
+              <div>
+                <label className="block text-gray-600 mb-1 text-sm">Student ID</label>
+                <input
+                  type="text"
+                  name="studentId"
+                  value={editForm.studentId || ''}
+                  onChange={handleInputChange}
+                  className="w-full p-2 border border-gray-300 rounded-md"
+                />
+              </div>
               
               <div>
                 <label className="block text-gray-600 mb-1 text-sm">Email</label>
@@ -236,6 +247,17 @@ const StudentProfile: React.FC = () => {
                 <input
                   type="text"
                   value={student.name}
+                  className="w-full p-2 border border-gray-300 rounded-md bg-gray-50"
+                  readOnly
+                />
+              </div>
+
+              
+              <div>
+                <label className="block text-gray-600 mb-1 text-sm">Student ID</label>
+                <input
+                  type="text"
+                  value={student.studentId}
                   className="w-full p-2 border border-gray-300 rounded-md bg-gray-50"
                   readOnly
                 />
