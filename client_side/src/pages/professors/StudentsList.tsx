@@ -1,4 +1,3 @@
-// src/pages/professors/StudentsList.tsx
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 

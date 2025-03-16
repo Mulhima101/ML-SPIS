@@ -11,6 +11,14 @@ const ProfessorProfile: React.FC = () => {
     faculty: 'Software Engineer'
   });
 
+  useEffect(() => {
+    // Check if the professor is logged in
+    const user = localStorage.getItem('professorUser');
+    if (!user) {
+      navigate('/professors/login');
+    }
+  }, [navigate]);
+
   const handleLogout = () => {
     localStorage.removeItem('professorUser');
     navigate('/professors/login');
@@ -18,9 +26,9 @@ const ProfessorProfile: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FEF8DD]">
-      <header className="flex justify-between items-center p-6">
+      <header className="flex justify-between items-center px-6 py-4">
         <h1 className="text-lg font-medium">Students</h1>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
           <button 
             onClick={handleLogout} 
             className="text-sm font-medium"
@@ -31,40 +39,40 @@ const ProfessorProfile: React.FC = () => {
         </div>
       </header>
 
-      <div className="flex flex-col items-center justify-center mt-8">
+      <div className="flex flex-col items-center mt-6">
         <div className="w-24 h-24 bg-gray-300 rounded-full mb-4"></div>
         <h2 className="text-xl font-medium">Professor Name</h2>
         <p className="text-gray-600 mb-8">Professor ID</p>
         
-        <div className="w-full max-w-3xl flex flex-wrap justify-center gap-8 px-4">
-          <div className="bg-white rounded-xl shadow-md p-6 w-full max-w-xs">
-            <div className="space-y-4">
+        <div className="w-full max-w-5xl flex justify-center gap-6 px-6">
+          <div className="bg-white rounded-2xl shadow-sm p-6 w-full max-w-md">
+            <div className="space-y-6">
               <div>
-                <p className="text-gray-500 text-sm">First Name</p>
-                <p className="font-medium">{professorData.firstName}</p>
+                <p className="text-gray-500 text-sm mb-1">First Name</p>
+                <p className="font-normal">{professorData.firstName}</p>
               </div>
               
               <div>
-                <p className="text-gray-500 text-sm">Last Name</p>
-                <p className="font-medium">{professorData.lastName}</p>
+                <p className="text-gray-500 text-sm mb-1">Last Name</p>
+                <p className="font-normal">{professorData.lastName}</p>
               </div>
               
               <div>
-                <p className="text-gray-500 text-sm">Honorifics</p>
-                <p className="font-medium">{professorData.honorifics}</p>
+                <p className="text-gray-500 text-sm mb-1">Honorifics</p>
+                <p className="font-normal">{professorData.honorifics}</p>
               </div>
               
               <div>
-                <p className="text-gray-500 text-sm">Email ID</p>
-                <p className="font-medium">{professorData.emailId}</p>
+                <p className="text-gray-500 text-sm mb-1">Email ID</p>
+                <p className="font-normal">{professorData.emailId}</p>
               </div>
             </div>
           </div>
           
-          <div className="bg-white rounded-xl shadow-md p-6 w-full max-w-xs">
+          <div className="bg-white rounded-2xl shadow-sm p-6 w-full max-w-md">
             <div>
-              <p className="text-gray-500 text-sm">Faculty</p>
-              <p className="font-medium">{professorData.faculty}</p>
+              <p className="text-gray-500 text-sm mb-1">Faculty</p>
+              <p className="font-normal">{professorData.faculty}</p>
             </div>
           </div>
         </div>

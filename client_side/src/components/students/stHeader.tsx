@@ -1,4 +1,3 @@
-// src/components/students/stHeader.tsx
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
@@ -22,34 +21,36 @@ function StHeader() {
   }, [location]);
 
   return (
-    <header className="flex justify-between items-center bg-[#fcfaed] p-0 shadow-sm">
+    <header className="flex justify-between items-center bg-[#fcfaed] p-0 shadow-sm student-header">
       <div className="flex">
         <Link 
           to="/students/guidance" 
-          className={`px-12 py-4 font-medium ${activePage.home ? 'bg-[#faeec9] text-black' : 'text-gray-700'}`}
+          className={`header-btn px-12 py-4 font-medium ${activePage.home ? 'active bg-[#faeec9] text-black' : 'text-gray-700 hover:bg-amber-50'}`}
         >
           Home
         </Link>
         <Link 
           to="/students/quizzes" 
-          className={`px-12 py-4 font-medium ${activePage.quiz ? 'bg-[#faeec9] text-black' : 'text-gray-700'}`}
+          className={`header-btn px-12 py-4 font-medium ${activePage.quiz ? 'active bg-[#faeec9] text-black' : 'text-gray-700 hover:bg-amber-50'}`}
         >
           Quiz
         </Link>
       </div>
       
-      <div className="flex items-center gap-4 pr-4">
+      <div className="flex items-center gap-4 pr-6">
         <button 
           onClick={() => {
             localStorage.removeItem('studentUser');
             window.location.href = '/students/login';
           }}
-          className="text-sm font-medium text-gray-700"
+          className="text-sm font-medium text-gray-700 hover:text-amber-700"
         >
           Logout
         </button>
         <Link to="/students/profile">
-          <div className="w-10 h-10 bg-gray-200 rounded-full"></div>
+          <div className="w-10 h-10 bg-gray-300 rounded-full shadow-sm overflow-hidden flex items-center justify-center text-gray-700 hover:bg-amber-200 transition-colors">
+            <span className="font-semibold">MJ</span>
+          </div>
         </Link>
       </div>
     </header>
