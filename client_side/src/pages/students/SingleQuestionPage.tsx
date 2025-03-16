@@ -1,3 +1,4 @@
+// src/pages/students/SingleQuestionPage.tsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 
@@ -6,111 +7,103 @@ import StHeader from '../../components/students/stHeader';
 interface Question {
   id: string;
   text: string;
-  topic: string;
   options: string[];
   correctAnswer?: number;
-  explanation?: string;
-}
-
-interface Quiz {
-  id: string;
-  title: string;
 }
 
 const SingleQuestionPage: React.FC = () => {
   const { quizId, questionId } = useParams<{ quizId: string; questionId: string }>();
   const navigate = useNavigate();
-  
-  const [quiz, setQuiz] = useState<Quiz | null>(null);
-  const [question, setQuestion] = useState<Question | null>(null);
+  const [quizTitle, setQuizTitle] = useState<string>('What is Lorem Ipsum.');
+  const [currentQuestion, setCurrentQuestion] = useState<Question | null>(null);
   const [selectedOption, setSelectedOption] = useState<number | null>(null);
-  const [isReviewMode, setIsReviewMode] = useState<boolean>(false);
+  const [timeRemaining, setTimeRemaining] = useState<number>(1200); // 20 minutes
   const [loading, setLoading] = useState<boolean>(true);
-  const [questionNumber, setQuestionNumber] = useState<number>(1);
+  const [questionNumbers, setQuestionNumbers] = useState<{number: number, answered: boolean, current: boolean}[]>([]);
   const [totalQuestions, setTotalQuestions] = useState<number>(15);
-  const [timeSpent, setTimeSpent] = useState<number>(0);
-  const [isSaving, setIsSaving] = useState<boolean>(false);
+  
+  // Get current question number from param
+  const currentQuestionNumber = parseInt(questionId || '1', 10);
+  const isLastQuestion = currentQuestionNumber === 15;
   
   useEffect(() => {
-    const fetchQuestionData = async () => {
+    // Check authentication
+    const user = localStorage.getItem('studentUser');
+    if (!user) {
+      navigate('/students/login');
+      return;
+    }
+
+    // Set up question numbers array for navigation
+    const questionNumbersArray = Array.from({ length: 15 }, (_, i) => ({
+      number: i + 1,
+      // Mark some questions as answered for demonstration
+      answered: [1, 2, 3, 4, 5, 7, 8, 11, 12, 13, 14].includes(i + 1),
+      current: i + 1 === currentQuestionNumber
+    }));
+    setQuestionNumbers(questionNumbersArray);
+    
+    // Mock fetching question data
+    const fetchQuestion = async () => {
       try {
         setTimeout(() => {
-          const mockQuiz: Quiz = {
-            id: quizId || 'default',
-            title: 'What is Lorem Ipsum.'
-          };
-
-          const isInReviewMode = window.location.search.includes('review=true');
-          
+          // Simulate different questions based on question number
+          const questionText = currentQuestionNumber === 15 
+            ? "Vestibulum congue luctus lorem, vitae varius nunc condimentum et. Vestibulum feugiat imperdiet dapibus. Aliquam eu sodales diam."
+            : "Quisque tristique molestie arcu. Fusce tincidunt dictum eros, tempus fermentum nunc ultrices eu. Proin in lacus eleifend, pharetra ipsum eget, lacinia elit.";
+            
           const mockQuestion: Question = {
-            id: questionId || 'q1',
-            text: 'Quisque tristique molestie arcu. Fusce tincidunt dictum eros, tempus fermentum nunc ultrices eu. Proin in lacus eleifend, pharetra ipsum eget, lacinia elit.',
-            topic: 'SDLC',
-            options: [
-              'Maecenas turpis nibh',
-              'faucibus ac convallis a',
-              'aliquet sit amet quam',
-              'tempus in volutpat at'
-            ]
+            id: `q${currentQuestionNumber}`,
+            text: questionText,
+            options: currentQuestionNumber === 15 
+              ? [
+                "Suspendisse potenti",
+                "leo a diam volutpat",
+                "Vivamus et hendrerit tortor",
+                "volutpat quam tincidunt"
+              ]
+              : [
+                "Maecenas turpis nibh",
+                "faucibus ac convallis a",
+                "aliquet sit amet quam",
+                "tempus in volutpat at"
+              ]
           };
           
-          if (isInReviewMode) {
-            mockQuestion.correctAnswer = 0;
-            mockQuestion.explanation = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.';
-          }
-          
-          setQuiz(mockQuiz);
-          setQuestion(mockQuestion);
-          setIsReviewMode(isInReviewMode);
-          setQuestionNumber(parseInt(questionId || '1'));
-          setTotalQuestions(15);
+          setCurrentQuestion(mockQuestion);
           setLoading(false);
-        }, 800);
+        }, 500);
       } catch (error) {
-        console.error('Error fetching question data:', error);
+        console.error('Error fetching question:', error);
         setLoading(false);
       }
     };
     
-    fetchQuestionData();
+    fetchQuestion();
     
+    // Timer effect
     const timer = setInterval(() => {
-      setTimeSpent(prev => prev + 1);
+      setTimeRemaining(prev => (prev > 0 ? prev - 1 : 0));
     }, 1000);
     
     return () => clearInterval(timer);
-  }, [quizId, questionId]);
+  }, [quizId, questionId, currentQuestionNumber, navigate]);
   
-  const handleOptionSelect = (optionIndex: number) => {
-    if (isReviewMode) return;
-    setSelectedOption(optionIndex);
+  const handleNextQuestion = () => {
+    // In real app, save answer to state or backend before navigating
+    if (selectedOption !== null) {
+      navigate(`/students/quiz/${quizId}/question/${currentQuestionNumber + 1}`);
+      setSelectedOption(null); // Reset selection for next question
+    }
   };
   
-  const handleSubmitAnswer = async () => {
-    if (selectedOption === null) return;
-    
-    setIsSaving(true);
-    
-    try {
-      console.log('Submitting answer:', {
-        quizId,
-        questionId,
-        selectedOption,
-        timeSpent
-      });
-      
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      if (questionNumber < totalQuestions) {
-        navigate(`/students/quiz/${quizId}/question/${questionNumber + 1}`);
-      } else {
-        navigate(`/students/quiz-result/${quizId}`);
-      }
-    } catch (error) {
-      console.error('Error submitting answer:', error);
-    } finally {
-      setIsSaving(false);
-    }
+  const handlePreviousQuestion = () => {
+    navigate(`/students/quiz/${quizId}/question/${currentQuestionNumber - 1}`);
+  };
+  
+  const handleSubmitQuiz = () => {
+    // In real app, submit all answers to backend
+    navigate(`/students/quiz-result/${quizId}`);
   };
   
   const formatTime = (seconds: number): string => {
@@ -120,93 +113,105 @@ const SingleQuestionPage: React.FC = () => {
   };
   
   if (loading) {
-    return <div className="loading">Loading question...</div>;
-  }
-  
-  if (!quiz || !question) {
-    return <div className="error-message">Question not found</div>;
+    return (
+      <div className="min-h-screen bg-[#faeec9] flex justify-center items-center">
+        <div className="loading">Loading question...</div>
+      </div>
+    );
   }
   
   return (
-    <div className="min-h-screen bg-[var(--primary-background-color)]">
+    <div className="min-h-screen bg-[#faeec9]">
       <StHeader />
       
-      <div className="container mx-auto px-4 py-6">
-        <h1 className="text-2xl font-bold mb-6">{quiz.title}</h1>
+      <div className="container mx-auto py-6">
+        <h1 className="text-2xl font-bold mb-6 text-center">{quizTitle}</h1>
         
-        <div className="bg-[var(--secondary-background-color)] rounded-xl p-8 mb-6">
-          <div className="flex flex-col mb-6">
-            <p className="text-xl font-medium mb-4">{questionNumber}. {question.text}</p>
+        <div className="flex gap-4 px-4">
+          {/* Question area */}
+          <div className="w-2/3 bg-amber-200 rounded-2xl p-8">
+            {currentQuestion && (
+              <>
+                <h2 className="text-xl mb-6">
+                  {currentQuestionNumber}. {currentQuestion.text}
+                </h2>
+                
+                <div className="space-y-4 mb-8">
+                  {currentQuestion.options.map((option, index) => (
+                    <button
+                      key={index}
+                      className={`w-full p-4 bg-white rounded-lg text-left hover:bg-gray-50 
+                        ${selectedOption === index ? 'bg-amber-50 border-2 border-amber-500' : ''}`}
+                      onClick={() => setSelectedOption(index)}
+                    >
+                      {option}
+                    </button>
+                  ))}
+                </div>
+                
+                <div className="flex justify-between mt-8">
+                  <button 
+                    className={`px-6 py-2 rounded-lg ${
+                      currentQuestionNumber > 1 
+                        ? 'bg-gray-700 text-white' 
+                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    }`}
+                    onClick={handlePreviousQuestion}
+                    disabled={currentQuestionNumber <= 1}
+                  >
+                    ← Previous
+                  </button>
+                  
+                  {isLastQuestion ? (
+                    <button 
+                      className="bg-green-500 text-white px-6 py-2 rounded-lg"
+                      onClick={handleSubmitQuiz}
+                    >
+                      Submit →
+                    </button>
+                  ) : (
+                    <button 
+                      className={`bg-gray-800 text-white px-6 py-2 rounded-lg ${
+                        selectedOption === null ? 'opacity-50 cursor-not-allowed' : ''
+                      }`}
+                      onClick={handleNextQuestion}
+                      disabled={selectedOption === null}
+                    >
+                      Next →
+                    </button>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+          
+          {/* Question numbers and timer */}
+          <div className="w-1/3 bg-amber-100 rounded-2xl p-6">
+            <h3 className="text-xl font-semibold mb-6">Question Numbers</h3>
             
-            <div className="space-y-4 mb-8">
-              {question.options.map((option, index) => (
-                <button
-                  key={index}
-                  className={`w-full text-left p-4 rounded-lg transition-colors ${
-                    selectedOption === index 
-                      ? 'bg-[var(--quiz-button-color)] text-white' 
-                      : 'bg-white hover:bg-gray-100'
-                  }`}
-                  onClick={() => handleOptionSelect(index)}
+            <div className="grid grid-cols-5 gap-4 mb-auto">
+              {questionNumbers.map((item) => (
+                <Link
+                  key={item.number}
+                  to={`/students/quiz/${quizId}/question/${item.number}`}
+                  className={`w-12 h-12 flex items-center justify-center font-bold rounded-lg
+                    ${item.current && item.answered ? 'bg-blue-500 text-white' : ''}
+                    ${item.current && !item.answered ? 'bg-red-500 text-white' : ''}
+                    ${!item.current && item.answered ? 'bg-green-500 text-white' : ''}
+                    ${!item.current && !item.answered ? 'bg-amber-200' : ''}
+                  `}
                 >
-                  {option}
-                </button>
+                  {item.number}
+                </Link>
               ))}
             </div>
             
-            <div className="flex justify-between mt-4">
-              <button 
-                className="bg-gray-200 px-6 py-2 rounded-lg font-medium"
-                onClick={() => navigate(`/students/quiz/${quizId}/question/${questionNumber - 1}`)}
-                disabled={questionNumber <= 1}
-              >
-                ← Previous
-              </button>
-              
-              {questionNumber < totalQuestions ? (
-                <button 
-                  className="bg-[var(--quiz-button-color)] text-white px-6 py-2 rounded-lg font-medium"
-                  onClick={handleSubmitAnswer}
-                  disabled={selectedOption === null || isSaving}
-                >
-                  Next →
-                </button>
-              ) : (
-                <button 
-                  className="bg-[var(--quiz-button-color)] text-white px-6 py-2 rounded-lg font-medium"
-                  onClick={handleSubmitAnswer}
-                  disabled={selectedOption === null || isSaving}
-                >
-                  Submit
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-[var(--secondary-background-color)] rounded-xl p-6">
-          <p className="mb-4 font-medium">Question Numbers</p>
-          <div className="grid grid-cols-5 gap-3">
-            {Array.from({ length: totalQuestions }).map((_, index) => (
-              <Link
-                key={index}
-                to={`/students/quiz/${quizId}/question/${index + 1}`}
-                className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                  index + 1 === questionNumber 
-                    ? 'bg-red-500 text-white' 
-                    : index < questionNumber
-                      ? 'bg-green-500 text-white'
-                      : 'bg-amber-200'
-                }`}
-              >
-                {index + 1}
-              </Link>
-            ))}
-          </div>
-          
-          <div className="flex justify-center mt-16">
-            <div className="w-40 h-40 rounded-full border-4 border-[var(--quiz-button-color)] flex items-center justify-center">
-              <span className="text-4xl font-bold text-[var(--quiz-button-color)]">20:00</span>
+            <div className="mt-16 flex justify-center">
+              <div className="w-40 h-40 rounded-full border-4 border-amber-500 flex items-center justify-center">
+                <span className="text-4xl font-bold text-amber-500">
+                  {formatTime(timeRemaining)}
+                </span>
+              </div>
             </div>
           </div>
         </div>

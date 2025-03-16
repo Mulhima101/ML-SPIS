@@ -8,9 +8,13 @@ function StHeader() {
 
   useEffect(() => {
     const pathname = location.pathname;
-    if (pathname === "/" || pathname === "/students/dashboard") {
+    if (pathname === "/" || pathname === "/students/guidance" || pathname === "/students/dashboard") {
       setActivePage({ home: true, quiz: false });
-    } else if (pathname.includes("/quiz") || pathname === "/students/quizzes") {
+    } else if (
+      pathname.includes("/quiz") || 
+      pathname === "/students/quizzes" || 
+      pathname.includes("/question")
+    ) {
       setActivePage({ home: false, quiz: true });
     } else {
       setActivePage({ home: false, quiz: false });
@@ -21,7 +25,7 @@ function StHeader() {
     <header className="flex justify-between items-center bg-[#fcfaed] p-0 shadow-sm">
       <div className="flex">
         <Link 
-          to="/students/dashboard" 
+          to="/students/guidance" 
           className={`px-12 py-4 font-medium ${activePage.home ? 'bg-[#faeec9] text-black' : 'text-gray-700'}`}
         >
           Home

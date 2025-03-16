@@ -69,8 +69,8 @@ const StudentRegister: React.FC = () => {
         academicYear: formData.academicYear
       }));
       
-      // Redirect to dashboard
-      navigate('/students/dashboard');
+      // Redirect to guidance page instead of dashboard
+      navigate('/students/guidance');
     } catch (err) {
       setError('Registration failed. Please try again.');
       console.error('Registration error:', err);

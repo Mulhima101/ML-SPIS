@@ -30,7 +30,7 @@ const router = createBrowserRouter([
       // Public routes
       {
         path: '/',
-        element: <StudentDashboard />,
+        element: <GuidancePage />,
       },
       {
         path: '/privacy-policy',
@@ -72,7 +72,7 @@ const router = createBrowserRouter([
       },
       {
         path: '/students/quiz-result/:quizId',
-        element: <QuizAllPage />, // This should be replaced with a QuizResult component
+        element: <StudentDashboard />, // Redirect to dashboard for now
       },
       
       // Professor routes
@@ -95,10 +95,6 @@ const router = createBrowserRouter([
       {
         path: '/professors/student/:studentId',
         element: <StudentDetails />,
-      },
-      {
-        path: '/professors/class/:classId',
-        element: <StudentDetails />, // This should be replaced with a ClassDetails component
       },
     ],
   },

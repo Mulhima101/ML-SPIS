@@ -19,8 +19,8 @@ const StudentLogin: React.FC = () => {
       if (email && password) {
         // Store user info in localStorage or context
         localStorage.setItem('studentUser', JSON.stringify({ email }));
-        // Redirect to dashboard
-        navigate('/students/dashboard');
+        // Redirect to guidance page instead of dashboard
+        navigate('/students/guidance');
       } else {
         setError('Please enter both email and password');
       }

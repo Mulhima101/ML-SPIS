@@ -1,6 +1,6 @@
 // src/pages/students/QuizAllPage.tsx
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import StHeader from '../../components/students/stHeader';
 
@@ -19,10 +19,18 @@ interface Quiz {
 }
 
 const QuizAllPage: React.FC = () => {
+  const navigate = useNavigate();
   const [quizzes, setQuizzes] = useState<Quiz[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   
   useEffect(() => {
+    // Check authentication
+    const user = localStorage.getItem('studentUser');
+    if (!user) {
+      navigate('/students/login');
+      return;
+    }
+
     // Mock fetching quizzes data
     const fetchQuizzes = async () => {
       try {
@@ -88,7 +96,7 @@ const QuizAllPage: React.FC = () => {
     };
     
     fetchQuizzes();
-  }, []);
+  }, [navigate]);
   
   if (loading) {
     return (
