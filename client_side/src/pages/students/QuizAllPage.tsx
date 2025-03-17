@@ -37,43 +37,43 @@ const QuizAllPage: React.FC = () => {
           const mockQuizzes: Quiz[] = [
             {
               id: 'q1',
-              title: 'What is Lorem Ipsum.',
-              description: 'Software Engineering',
+              title: 'What is OOP?',
+              description: 'Programming Fundamentals',
               status: 'uncompleted',
-              score: '15/0',
+              score: '0/10',
               startTime: '07:00pm',
               endTime: '08:00pm',
               duration: '20:00'
             },
             {
               id: 'q2',
-              title: 'Consectetur adipiscing elit.',
+              title: 'Black-Box And White-Box Testing.',
               description: 'Software Engineering',
               status: 'completed',
               result: 'Pass',
-              score: '15/15',
+              score: '10/10',
               startTime: '07:00pm',
               endTime: '08:00pm',
               duration: '30:00'
             },
             {
               id: 'q3',
-              title: 'Orci varius natoque penatibus.',
-              description: 'Software Engineering',
+              title: 'Supervised And Unsupervised Learning',
+              description: 'Artificial Intelligence',
               status: 'uncompleted',
               result: 'Pass',
-              score: '15/12',
+              score: '10/10',
               startTime: '04:00pm',
               endTime: '05:00pm',
               duration: '15:00'
             },
             {
               id: 'q4',
-              title: 'Nulla dictum tincidunt dolor.',
-              description: 'Network &',
+              title: 'What is Encryption?',
+              description: 'Computer Networks',
               status: 'completed',
               result: 'Fail',
-              score: '15/15',
+              score: '5/5',
               startTime: '04:00pm',
               endTime: '05:00pm',
               duration: '00:00'
@@ -104,14 +104,13 @@ const QuizAllPage: React.FC = () => {
     <div className="min-h-screen bg-[#faeec9]">
       <StHeader />
       
-      <div className="p-8">
-        <h1 className="text-2xl font-bold mb-6">Quiz</h1>
+      <div className="p-4 md:p-8">
+        <h1 className="text-4xl font-bold mb-6">Quiz</h1>
         
-        <div className="bg-white rounded-xl p-6 shadow-sm">
+        <div className="bg-white rounded-[40px] p-6 shadow-sm">
           <div className="space-y-4">
             {quizzes.map((quiz) => {
-              // Determine background color based on status and result
-              let bgColor = "bg-gray-200"; // Default for uncompleted
+              let bgColor = "bg-gray-200";
               if (quiz.status === 'completed') {
                 bgColor = quiz.result === 'Pass' ? "bg-green-100" : "bg-red-100";
               }
@@ -119,31 +118,34 @@ const QuizAllPage: React.FC = () => {
               return (
                 <div 
                   key={quiz.id} 
-                  className={`${bgColor} rounded-lg p-6 flex justify-between items-center`}
+                  className={`${bgColor} rounded-[20px] p-4 flex flex-col lg:flex-row justify-between lg:items-center`}
                 >
-                  <div className="flex flex-col">
-                    <h2 className="text-xl font-bold">{quiz.title}</h2>
+                  <div className="flex flex-[2] flex-col">
+                    <h2 className="text-[1.5rem] font-semibold">{quiz.title}</h2>
                     <p className="text-gray-600">{quiz.description}</p>
                     <p className="mt-1">{quiz.status}</p>
                   </div>
-                  
-                  <div className="flex items-center gap-8">
+
+                  <div className='flex-1 [&>*]:text-xl'>
                     {quiz.result && (
-                      <span className={quiz.result === 'Pass' ? 'text-green-600' : 'text-red-600'}>
-                        {quiz.result}
-                      </span>
+                        <span className={quiz.result === 'Pass' ? 'text-green-600' : 'text-red-600'}>
+                          {quiz.result}
+                        </span>
                     )}
+                  </div>
+                  
+                  <div className="flex flex-[3] justify-start sm:justify-end items-end">
                     
-                    <div className="text-right flex flex-col items-end">
+                    <div className="sm:text-right flex flex-1 flex-col sm:flex-row gap-1 sm:gap-10 justify-center items-start [&>p]:text-[1.2rem] sm:[&>p]:text-[1.4rem] mr-10">
                       <p>{quiz.score}</p>
                       <p>Start At: {quiz.startTime}</p>
                       <p>End At: {quiz.endTime}</p>
-                      <p className="text-2xl font-bold">{quiz.duration}</p>
+                      <p className="!text-[1.6rem] font-bold">{quiz.duration}</p>
                     </div>
                     
                     <Link 
                       to={`/students/quiz/${quiz.id}`}
-                      className="bg-[#172554] text-white px-6 py-2 rounded-md hover:bg-[#1e3a8a] transition"
+                      className="bg-[#172554] text-white px-6 py-2 rounded-xl hover:bg-[#1e3a8a] transition"
                     >
                       Start
                     </Link>

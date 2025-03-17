@@ -21,17 +21,17 @@ function StHeader() {
   }, [location]);
 
   return (
-    <header className="flex justify-between items-center bg-[#fcfaed] p-0 shadow-sm student-header">
-      <div className="flex">
+    <header className="flex justify-between items-center bg-[#fcfaed] p-0 px-6">
+      <div className="flex pt-4 [&>a]:rounded-tr-[20px] [&>a]:rounded-tl-[20px] [&>a]:font-medium">
         <Link 
           to="/students/guidance" 
-          className={`header-btn px-12 py-4 font-medium ${activePage.home ? 'active bg-[#faeec9] text-black' : 'text-gray-700 hover:bg-amber-50'}`}
+          className={`header-btn px-6 md:px-12 py-4 text-[1.2rem] ${activePage.home ? 'active bg-[#faeec9] text-black' : 'text-gray-500 hover:bg-amber-50'}`}
         >
           Home
         </Link>
         <Link 
           to="/students/quizzes" 
-          className={`header-btn px-12 py-4 font-medium ${activePage.quiz ? 'active bg-[#faeec9] text-black' : 'text-gray-700 hover:bg-amber-50'}`}
+          className={`header-btn px-6 md:px-12 py-4 text-[1.2rem] ${activePage.quiz ? 'active bg-[#faeec9] text-black' : 'text-gray-500 hover:bg-amber-50'}`}
         >
           Quiz
         </Link>
