@@ -1,4 +1,3 @@
-// src/pages/professors/ProfessorLogin.tsx
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -33,21 +32,18 @@ const ProfessorLogin: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#faeec9]">
-      <div className="flex w-full max-w-4xl rounded-2xl overflow-hidden shadow-xl">
-        <div className="w-2/5 bg-amber-300 flex items-center justify-center p-12">
+      <div className="flex flex-col lg:flex-row w-full max-w-4xl rounded-2xl m-4 overflow-hidden shadow-xl">
+        <div className="w-full lg:w-2/5 bg-amber-300 flex items-center justify-center p-2 lg:p-12">
           <div className="text-center">
           <h2 className="text-2xl font-bold">
               <span className="text-xl">Machine Learning Based </span>
               <br />
-              <span className="text-2xl">Student Progress</span>
-              <br />
-              <span className="text-2xl">Improvement System</span>
+              <span className="text-2xl">Student Progress Improvement System</span>
             </h2>
           </div>
         </div>
         
-        <div className="w-3/5 bg-[#fcfaed] p-12 relative">
-          <div className="absolute top-4 right-4 text-2xl cursor-pointer">×</div>
+        <div className="w-full lg:w-3/5 bg-[#fcfaed] p-4 sm:p-12 relative">
           
           <h2 className="text-2xl font-bold mb-8 text-center">Professor Login</h2>
           

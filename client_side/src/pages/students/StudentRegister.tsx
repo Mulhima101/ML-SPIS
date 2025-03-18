@@ -79,23 +79,20 @@ const StudentRegister: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#faeec9]">
-      <div className="flex w-full max-w-4xl rounded-2xl overflow-hidden shadow-xl">
+      <div className="flex flex-col lg:flex-row w-full max-w-4xl rounded-2xl m-4 overflow-hidden shadow-xl">
         {/* Left Side */}
-        <div className="w-2/5 bg-amber-300 flex items-center justify-center p-12">
+        <div className="w-full lg:w-2/5 bg-amber-300 flex items-center justify-center p-2 lg:p-12">
           <div className="text-center">
             <h2 className="text-2xl font-bold">
               <span className="text-xl">Machine Learning Based </span>
               <br />
-              <span className="text-2xl">Student Progress</span>
-              <br />
-              <span className="text-2xl">Improvement System</span>
+              <span className="text-2xl">Student Progress Improvement System</span>
             </h2>
           </div>
         </div>
         
         {/* Right Side */}
-        <div className="w-3/5 bg-[#fcfaed] p-12 relative">
-          <div className="absolute top-4 right-4 text-2xl cursor-pointer">×</div>
+        <div className="w-full lg:w-3/5 bg-[#fcfaed] p-4 sm:p-12 relative">
           
           <h2 className="text-2xl font-bold mb-6 text-center">Student Registration</h2>
           
@@ -105,8 +102,8 @@ const StudentRegister: React.FC = () => {
             </div>
           )}
           
-          <form onSubmit={handleSubmit}>
-            <div className="grid grid-cols-2 gap-4 mb-4">
+          <form onSubmit={handleSubmit} className='space-y-2'>
+            <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className="block text-gray-700 mb-1 font-medium text-sm">First Name</label>
                 <input
@@ -134,7 +131,7 @@ const StudentRegister: React.FC = () => {
               </div>
             </div>
             
-            <div className="mb-4">
+            <div>
               <label className="block text-gray-700 mb-1 font-medium text-sm">Email ID</label>
               <input
                 type="email"
@@ -147,7 +144,7 @@ const StudentRegister: React.FC = () => {
               />
             </div>
             
-            <div className="mb-4">
+            <div>
               <label className="block text-gray-700 mb-1 font-medium text-sm">Faculty</label>
               <select
                 name="faculty"
@@ -162,7 +159,7 @@ const StudentRegister: React.FC = () => {
               </select>
             </div>
             
-            <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className="block text-gray-700 mb-1 font-medium text-sm">Intake No</label>
                 <select
@@ -196,7 +193,7 @@ const StudentRegister: React.FC = () => {
               </div>
             </div>
             
-            <div className="mb-4">
+            <div>
               <label className="block text-gray-700 mb-1 font-medium text-sm">Password</label>
               <input
                 type="password"
@@ -208,7 +205,7 @@ const StudentRegister: React.FC = () => {
               />
             </div>
             
-            <div className="mb-6">
+            <div className="mb-4">
               <label className="block text-gray-700 mb-1 font-medium text-sm">Confirm Password</label>
               <input
                 type="password"
@@ -220,7 +217,7 @@ const StudentRegister: React.FC = () => {
               />
             </div>
             
-            <div className="mb-6 flex items-center">
+            <div className="mb-4 flex items-center">
               <input
                 type="checkbox"
                 name="agreeToTerms"
@@ -239,7 +236,7 @@ const StudentRegister: React.FC = () => {
               Sign Up
             </button>
             
-            <div className="mt-4 text-center text-sm">
+            <div className="mt-2 text-center text-sm">
               <Link to="/students/login" className="text-amber-600">Already have an account? Login</Link>
             </div>
           </form>
