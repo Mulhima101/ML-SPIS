@@ -1,10 +1,6 @@
-from flask import Flask, jsonify
+from app import create_app
 
-app = Flask(__name__)
-
-@app.route('/')
-def welcome():
-    return jsonify({'message': 'Welcome to the Flask API!'})
+app = create_app()
 
 if __name__ == '__main__':
     app.run(debug=True)
