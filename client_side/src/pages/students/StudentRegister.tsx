@@ -1,4 +1,3 @@
-// client_side/src/pages/students/StudentRegister.tsx
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../../services/api';

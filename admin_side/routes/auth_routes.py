@@ -100,3 +100,43 @@ def login():
         'token': token,
         'user': user.to_dict()
     }), 200
+
+@auth_bp.route('/verify-token', methods=['POST'])
+def verify_token():
+    """Verify if a token is valid and return user info"""
+    from utils.jwt_utils import decode_token
+    
+    # Get token from request
+    data = request.get_json()
+    token = data.get('token', '')
+    
+    if not token:
+        return jsonify({'valid': False, 'message': 'No token provided'}), 400
+    
+    try:
+        # Decode the token
+        payload = decode_token(token)
+        
+        # Get user from database
+        user_id = payload.get('sub')
+        user_type = payload.get('type')
+        
+        # Find the user
+        if user_type == 'student':
+            user = Student.query.get(user_id)
+        elif user_type == 'professor':
+            user = Professor.query.get(user_id)
+        else:
+            user = User.query.get(user_id)
+        
+        if not user:
+            return jsonify({'valid': False, 'message': 'User not found'}), 404
+        
+        # Return user info
+        return jsonify({
+            'valid': True,
+            'user': user.to_dict()
+        }), 200
+        
+    except Exception as e:
+        return jsonify({'valid': False, 'message': str(e)}), 401

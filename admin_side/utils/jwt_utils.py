@@ -19,6 +19,21 @@ def generate_token(user_id, user_type):
         algorithm='HS256'
     )
 
+def decode_token(token):
+    """Decode a JWT token and return the payload"""
+    try:
+        # Decode token
+        payload = jwt.decode(
+            token, 
+            current_app.config.get('JWT_SECRET_KEY'), 
+            algorithms=['HS256']
+        )
+        return payload
+    except jwt.ExpiredSignatureError:
+        raise Exception('Token has expired')
+    except jwt.InvalidTokenError:
+        raise Exception('Invalid token')
+
 def token_required(f):
     """Decorator for endpoints that require authentication"""
     @wraps(f)
@@ -29,7 +44,11 @@ def token_required(f):
         if 'Authorization' in request.headers:
             auth_header = request.headers['Authorization']
             try:
-                token = auth_header.split(" ")[1]
+                # Handle both "Bearer <token>" and just "<token>" formats
+                if auth_header.startswith('Bearer '):
+                    token = auth_header.split("Bearer ")[1].strip()
+                else:
+                    token = auth_header.strip()
             except IndexError:
                 return jsonify({'message': 'Invalid token format'}), 401
         
@@ -38,19 +57,22 @@ def token_required(f):
         
         try:
             # Decode token
-            from models.UserModel import User
-            data = jwt.decode(token, current_app.config.get('JWT_SECRET_KEY'), algorithms=['HS256'])
+            from models.UserModel import User, Student, Professor
+            payload = decode_token(token)
+            user_id = payload['sub']
+            user_type = payload.get('type')
             
-            # Get user from database
-            current_user = User.query.get(data['sub'])
+            # Get user from database based on type
+            if user_type == 'student':
+                current_user = Student.query.get(user_id)
+            elif user_type == 'professor':
+                current_user = Professor.query.get(user_id)
+            else:
+                current_user = User.query.get(user_id)
             
             if not current_user:
                 return jsonify({'message': 'User not found'}), 401
             
-        except jwt.ExpiredSignatureError:
-            return jsonify({'message': 'Token has expired'}), 401
-        except jwt.InvalidTokenError:
-            return jsonify({'message': 'Invalid token'}), 401
         except Exception as e:
             return jsonify({'message': f'Token error: {str(e)}'}), 401
         

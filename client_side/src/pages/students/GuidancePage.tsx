@@ -1,15 +1,16 @@
-// client_side/src/pages/students/GuidancePage.tsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import StHeader from '../../components/students/stHeader';
 import { studentService } from '../../services/api';
+import { useAuth } from '../../contexts/AuthContext';
+
+import StHeader from '../../components/students/stHeader';
 
 interface TopicGuidance {
   topic: string;
   score: number;
-  status: 'weak' | 'moderate' | 'strong';
+  status: string; // 'low', 'normal', or 'high'
   recommendations: {
-    type: 'resource' | 'practice' | 'goal';
+    type: string;
     title: string;
     description: string;
     link?: string;
@@ -17,7 +18,7 @@ interface TopicGuidance {
 }
 
 interface LearningPath {
-  level: 'Low' | 'Normal' | 'High';
+  level: string;
   description: string;
   milestones: {
     title: string;
@@ -26,225 +27,318 @@ interface LearningPath {
   }[];
 }
 
+interface GuidanceData {
+  topicGuidance: TopicGuidance[];
+  learningPath: LearningPath;
+}
+
 const GuidancePage: React.FC = () => {
-  const [topicGuidance, setTopicGuidance] = useState<TopicGuidance[]>([]);
-  const [learningPath, setLearningPath] = useState<LearningPath | null>(null);
+  const [guidanceData, setGuidanceData] = useState<GuidanceData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'guidance' | 'learningPath'>('guidance');
+  const { user } = useAuth();
   
   useEffect(() => {
     const fetchGuidanceData = async () => {
       try {
-        // Get user data from localStorage
-        const userData = JSON.parse(localStorage.getItem('studentUser') || '{}');
-        const studentId = userData.id;
+        setLoading(true);
+        setError(null);
         
-        if (studentId) {
-          // Try to get data from API
-          try {
-            const response = await studentService.getGuidance(studentId);
-            
-            if (response.data && response.data.topicGuidance) {
-              setTopicGuidance(response.data.topicGuidance);
+        if (!user) {
+          setError('User not found. Please log in again.');
+          setLoading(false);
+          return;
+        }
+        
+        // Get guidance data from API
+        try {
+          const response = await studentService.getGuidance(user.id);
+          setGuidanceData(response.data);
+        } catch (apiError: any) {
+          console.error('API Error:', apiError);
+          setError('Failed to load guidance data from server. Using default guidance.');
+          
+          // Use mock data as fallback
+          setGuidanceData({
+            topicGuidance: [
+              {
+                topic: 'SDLC',
+                score: 0.45,
+                status: 'low',
+                recommendations: [
+                  {
+                    type: 'resource',
+                    title: 'Fundamentals',
+                    description: 'Review the basic concepts of SDLC to build a solid foundation.',
+                    link: '/resources/fundamentals'
+                  },
+                  {
+                    type: 'practice',
+                    title: 'Basic Practice',
+                    description: 'Complete basic exercises to reinforce your understanding of SDLC.',
+                    link: '/practice/basic'
+                  }
+                ]
+              },
+              {
+                topic: 'Agile',
+                score: 0.6,
+                status: 'normal',
+                recommendations: [
+                  {
+                    type: 'resource',
+                    title: 'Advanced Concepts',
+                    description: 'Explore more advanced concepts in Agile to deepen your knowledge.',
+                    link: '/resources/advanced'
+                  }
+                ]
+              },
+              {
+                topic: 'OSI Model',
+                score: 0.8,
+                status: 'high',
+                recommendations: [
+                  {
+                    type: 'goal',
+                    title: 'Knowledge Sharing',
+                    description: 'Consider sharing your knowledge of the OSI Model with peers.',
+                    link: '/community'
+                  }
+                ]
+              }
+            ],
+            learningPath: {
+              level: 'Normal',
+              description: 'Your current knowledge level is Normal. This personalized learning path will help you strengthen your weak areas and advance to a High knowledge level.',
+              milestones: [
+                {
+                  title: 'Strengthen Knowledge',
+                  description: 'Aim to improve your scores in all topics to at least 70%.',
+                  isCompleted: false
+                },
+                {
+                  title: 'Apply Concepts',
+                  description: 'Work on applying theoretical knowledge to practical problems.',
+                  isCompleted: false
+                },
+                {
+                  title: 'Advanced Topics',
+                  description: 'Begin exploring more advanced topics and concepts.',
+                  isCompleted: false
+                }
+              ]
             }
-            
-            if (response.data && response.data.learningPath) {
-              setLearningPath(response.data.learningPath);
-            }
-          } catch (apiError) {
-            console.error('API Error:', apiError);
-            // Fallback to mock data on API error
-            useMockData();
-          }
-        } else {
-          // Use mock data if no user ID found
-          useMockData();
+          });
         }
         
         setLoading(false);
       } catch (error) {
         console.error('Error fetching guidance data:', error);
-        useMockData();
+        setError('Failed to load guidance data. Please try again.');
         setLoading(false);
       }
     };
     
-    // Function to use mock data as fallback
-    const useMockData = () => {
-      // This is your existing mock data
-      const mockTopicGuidance: TopicGuidance[] = [
-        {
-          topic: 'leo venenatis placerat',
-          score: 0.8,
-          status: 'strong',
-          recommendations: [
-            {
-              type: 'resource',
-              title: 'Advanced Concepts',
-              description: 'Learn about advanced concepts in this area.',
-              link: '/resources/advanced'
-            }
-          ]
-        },
-        {
-          topic: 'Aliquam vel lacus volutpat',
-          score: 0.65,
-          status: 'moderate',
-          recommendations: [
-            {
-              type: 'practice',
-              title: 'Case Studies',
-              description: 'Review real-world case studies.',
-              link: '/practice/cases'
-            }
-          ]
-        },
-        {
-          topic: 'non consectetur',
-          score: 0.45,
-          status: 'weak',
-          recommendations: [
-            {
-              type: 'resource',
-              title: 'Fundamentals',
-              description: 'Back-to-basics approach on understanding the core concepts.',
-              link: '/resources/fundamentals'
-            }
-          ]
-        },
-        {
-          topic: 'Vivamus bibendum',
-          score: 0.72,
-          status: 'moderate',
-          recommendations: []
-        },
-        {
-          topic: 'Suspendisse congue',
-          score: 0.38,
-          status: 'weak',
-          recommendations: []
-        },
-        {
-          topic: 'Nibh vitae laoreet pharetra',
-          score: 0.85,
-          status: 'strong',
-          recommendations: []
-        },
-        {
-          topic: 'Sed finibus dignissim',
-          score: 0.42,
-          status: 'weak',
-          recommendations: []
-        },
-        {
-          topic: 'Cras bibendum felis',
-          score: 0.68,
-          status: 'moderate',
-          recommendations: []
-        },
-        {
-          topic: 'vitae laoreet pharetra',
-          score: 0.78,
-          status: 'moderate',
-          recommendations: []
-        },
-        {
-          topic: 'Donec sollicitudin purus',
-          score: 0.35,
-          status: 'weak',
-          recommendations: []
-        }
-      ];
-      
-      const mockLearningPath: LearningPath = {
-        level: 'Normal',
-        description: 'Your current knowledge level is Normal. This personalized learning path will help you strengthen your weak areas and advance to a High knowledge level.',
-        milestones: [
-          {
-            title: 'Master Fundamentals',
-            description: 'Focus on understanding the purpose and function of each concept.',
-            isCompleted: false
-          },
-          {
-            title: 'Improve Methodology Understanding',
-            description: 'Learn more about roles and practical applications.',
-            isCompleted: false
-          }
-        ]
-      };
-      
-      setTopicGuidance(mockTopicGuidance);
-      setLearningPath(mockLearningPath);
-    };
-    
     fetchGuidanceData();
-  }, []);
+  }, [user]);
   
-  // Keep the rest of your component unchanged
+  const getStatusColor = (status: string): string => {
+    switch(status.toLowerCase()) {
+      case 'low':
+        return 'red-100 border-red-200 text-red-700';
+      case 'normal':
+        return 'blue-100 border-blue-200 text-blue-700';
+      case 'high':
+        return 'green-100 border-green-200 text-green-700';
+      default:
+        return 'gray-100 border-gray-200 text-gray-700';
+    }
+  };
+  
+  const getRecommendationIcon = (type: string): string => {
+    switch(type) {
+      case 'resource':
+        return '📚'; // Book icon
+      case 'practice':
+        return '⚙️'; // Gear icon
+      case 'goal':
+        return '🎯'; // Target icon
+      case 'prerequisite':
+        return '🔑'; // Key icon
+      default:
+        return '📝'; // Note icon
+    }
+  };
+  
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#faeec9] flex justify-center items-center">
+      <div className="min-h-screen bg-[var(--primary-background-color)] flex justify-center items-center">
         <div className="loading">Loading personalized guidance...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[var(--primary-background-color)] flex justify-center items-center">
+        <div className="error-message p-4 bg-red-100 text-red-700 rounded-lg">
+          {error}
+          <div className="mt-4">
+            <Link to="/students/login" className="px-4 py-2 bg-amber-600 text-white rounded-lg">
+              Return to Login
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
+  
+  if (!guidanceData) {
+    return (
+      <div className="min-h-screen bg-[var(--primary-background-color)] flex justify-center items-center">
+        <div className="error-message">No guidance data available.</div>
       </div>
     );
   }
   
   return (
-    <div className="min-h-screen bg-[#faeec9]">
+    <div className="min-h-screen bg-[var(--primary-background-color)]">
       <StHeader />
       
-      <div className="container mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 bg-white rounded-xl p-8 shadow-sm">
-          <h2 className="text-2xl font-bold mb-6">Guidance</h2>
-          
-          <p className="text-gray-700 mb-6">
-            Aliquam nulla diam, semper eu libero eget, dictum interdum mi. Vestibulum fringilla luctus hendrerit. 
-            Fusce auctor mi in elit tempor pretium et ac augue. Duis vitae mattis arcu, vel gravida dolor.
-          </p>
-          
-          <p className="text-gray-700 mb-6">
-            Nunc pulvinar mollis erat. Sed nec sapien nec ligula commodo auctor a id massa. Fusce vitae justo a 
-            turpis tincidunt tristique. In et nisi rutrum, sodales lectus sed, porttitor quam. Proin vitae eros eu purus 
-            hendrerit facilisis id vitae lacus. Etiam vehicula viverra venenatis. Nam sed orci tempus, molestie mi 
-            eget, volutpat libero. Sed finibus sagittis libero ac vehicula. Orci varius natoque penatibus et magnis 
-            dis parturient montes, nascetur ridiculus mus. Integer eleifend ligula in metus ultrices maximus.
-          </p>
-          
-          <p className="text-gray-700 mb-6">
-            Quisque id felis et mauris porta commodo non ac purus. Maecenas turpis nibh, faucibus ac convallis a, 
-            aliquet sit amet quam. Curabitur eu felis tempus urna laoreet vehicula nec nec metus. Duis ultricies 
-            commodo suscipit. Duis suscipit diam a lobortis porttitor. Etiam non magna euismod, dictum elit vel, 
-            luctus dolor.
-          </p>
-          
-          <p className="text-gray-700">
-            Quisque tristique molestie arcu. Fusce tincidunt dictum eros, tempus fermentum nunc ultrices eu. 
-            Proin in lacus eleifend, pharetra ipsum eget, lacinia elit. Class aptent taciti sociosqu ad litora torquent 
-            per conubia nostra, per inceptos himenaeos. Suspendisse potenti. Curabitur ac purus ut nulla 
-            bibendum efficitur. Morbi posuere, mauris id vestibulum malesuada, nisi velit ornare risus, et 
-            vestibulum elit libero non eros. Pellentesque habitant morbi tristique senectus et netus et malesuada 
-            fames ac turpis egestas. Nulla lacinia porttitor sem, eu rutrum ante luctus sit amet.
-          </p>
+      <div className="container mx-auto px-4 py-6">
+        <h1 className="text-3xl font-bold mb-6">Personalized Guidance</h1>
+        
+        {/* Tabs */}
+        <div className="flex mb-6 border-b border-gray-200">
+          <button
+            className={`py-2 px-4 font-medium ${
+              activeTab === 'guidance' 
+                ? 'border-b-2 border-amber-500 text-amber-600' 
+                : 'text-gray-600 hover:text-amber-500'
+            }`}
+            onClick={() => setActiveTab('guidance')}
+          >
+            Topic Guidance
+          </button>
+          <button
+            className={`py-2 px-4 font-medium ${
+              activeTab === 'learningPath' 
+                ? 'border-b-2 border-amber-500 text-amber-600' 
+                : 'text-gray-600 hover:text-amber-500'
+            }`}
+            onClick={() => setActiveTab('learningPath')}
+          >
+            Learning Path
+          </button>
         </div>
         
-        <div className="bg-blue-600 rounded-xl p-6 shadow-sm text-white">
-          <h2 className="text-xl font-bold mb-6">Targets</h2>
-          
-          <div className="space-y-3">
-            {topicGuidance.map(topic => (
-              <div 
-                key={topic.topic}
-                className={`p-3 rounded-md ${
-                  topic.status === 'strong' 
-                    ? 'bg-green-500' 
-                    : topic.status === 'moderate'
-                      ? 'bg-blue-400'
-                      : 'bg-red-400'
-                }`}
-              >
-                {topic.topic}
+        {/* Tab Content */}
+        <div className="bg-white rounded-xl p-6 shadow-md">
+          {activeTab === 'guidance' ? (
+            <div>
+              <h2 className="text-xl font-semibold mb-6">Topic-Based Guidance</h2>
+              <p className="text-gray-700 mb-6">
+                Based on your quiz performance, we've identified areas where you can focus to improve your skills.
+                The topics below are ordered by priority, with the ones needing the most attention listed first.
+              </p>
+              
+              <div className="space-y-6">
+                {guidanceData.topicGuidance.map((topic, index) => (
+                  <div 
+                    key={index}
+                    className={`border rounded-lg ${getStatusColor(topic.status)}`}
+                  >
+                    <div className="p-4 border-b border-gray-200">
+                      <div className="flex justify-between items-center">
+                        <h3 className="text-lg font-semibold">{topic.topic}</h3>
+                        <span className="px-3 py-1 rounded-full bg-opacity-20 font-medium text-sm">
+                          Score: {(topic.score * 100).toFixed(0)}%
+                        </span>
+                      </div>
+                    </div>
+                    
+                    {topic.recommendations.length > 0 && (
+                      <div className="p-4">
+                        <h4 className="text-sm uppercase text-gray-500 font-medium mb-3">Recommendations</h4>
+                        <div className="space-y-3">
+                          {topic.recommendations.map((rec, recIndex) => (
+                            <div key={recIndex} className="flex gap-3 p-3 bg-white rounded-lg shadow-sm">
+                              <div className="text-2xl">
+                                {getRecommendationIcon(rec.type)}
+                              </div>
+                              <div>
+                                <h5 className="font-medium mb-1">{rec.title}</h5>
+                                <p className="text-sm text-gray-600 mb-2">{rec.description}</p>
+                                {rec.link && (
+                                  <Link 
+                                    to={rec.link}
+                                    className="text-amber-600 text-sm font-medium hover:underline"
+                                  >
+                                    Learn more →
+                                  </Link>
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div>
+              <h2 className="text-xl font-semibold mb-2">Learning Path</h2>
+              <p className="text-sm text-gray-500 mb-4">
+                Your current knowledge level: <span className="font-medium">{guidanceData.learningPath.level}</span>
+              </p>
+              <p className="text-gray-700 mb-6">{guidanceData.learningPath.description}</p>
+              
+              <h3 className="text-lg font-semibold mb-4">Milestones</h3>
+              <div className="space-y-4">
+                {guidanceData.learningPath.milestones.map((milestone, index) => (
+                  <div 
+                    key={index}
+                    className={`border rounded-lg p-4 ${
+                      milestone.isCompleted ? 'bg-green-50 border-green-100' : 'bg-gray-50'
+                    }`}
+                  >
+                    <div className="flex gap-4 items-start">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center font-medium ${
+                        milestone.isCompleted 
+                          ? 'bg-green-500 text-white' 
+                          : 'bg-amber-500 text-white'
+                      }`}>
+                        {index + 1}
+                      </div>
+                      <div>
+                        <h4 className="font-medium">{milestone.title}</h4>
+                        <p className="text-gray-600 text-sm mt-1">{milestone.description}</p>
+                      </div>
+                      <div className="ml-auto">
+                        {milestone.isCompleted ? (
+                          <span className="text-green-600 text-sm font-medium">Completed</span>
+                        ) : (
+                          <span className="text-amber-600 text-sm font-medium">In Progress</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              
+              <div className="mt-8">
+                <Link 
+                  to="/students/quizzes" 
+                  className="px-4 py-2 bg-amber-600 text-white rounded-lg hover:bg-amber-700 transition"
+                >
+                  Take a Quiz to Progress
+                </Link>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -1,6 +1,7 @@
 // src/routers/router.tsx
 import { createBrowserRouter } from 'react-router-dom';
 import MainLayout from '../layouts/main';
+import AuthGuard from '../components/AuthGuard';
 
 // Student Pages
 import StudentLogin from '../pages/students/StudentLogin';
@@ -30,14 +31,14 @@ const router = createBrowserRouter([
       // Public routes
       {
         path: '/',
-        element: <GuidancePage />,
+        element: <StudentLogin />,
       },
       {
         path: '/privacy-policy',
         element: <PrivacyPolicy />,
       },
       
-      // Student routes
+      // Authentication routes
       {
         path: '/students/login',
         element: <StudentLogin />,
@@ -47,36 +48,6 @@ const router = createBrowserRouter([
         element: <StudentRegister />,
       },
       {
-        path: '/students/dashboard',
-        element: <StudentDashboard />,
-      },
-      {
-        path: '/students/profile',
-        element: <StudentProfile />,
-      },
-      {
-        path: '/students/guidance',
-        element: <GuidancePage />,
-      },
-      {
-        path: '/students/quizzes',
-        element: <QuizAllPage />,
-      },
-      {
-        path: '/students/quiz/:quizId',
-        element: <QuizPage />,
-      },
-      {
-        path: '/students/quiz/:quizId/question/:questionId',
-        element: <SingleQuestionPage />,
-      },
-      {
-        path: '/students/quiz-result/:quizId',
-        element: <StudentDashboard />, // Redirect to dashboard for now
-      },
-      
-      // Professor routes
-      {
         path: '/professors/login',
         element: <ProfessorLogin />,
       },
@@ -84,17 +55,89 @@ const router = createBrowserRouter([
         path: '/professors/register',
         element: <ProfessorRegistration />,
       },
+      
+      // Protected student routes
+      {
+        path: '/students/dashboard',
+        element: (
+          <AuthGuard requiredRole="student">
+            <StudentDashboard />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: '/students/profile',
+        element: (
+          <AuthGuard requiredRole="student">
+            <StudentProfile />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: '/students/guidance',
+        element: (
+          <AuthGuard requiredRole="student">
+            <GuidancePage />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: '/students/quizzes',
+        element: (
+          <AuthGuard requiredRole="student">
+            <QuizAllPage />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: '/students/quiz/:quizId',
+        element: (
+          <AuthGuard requiredRole="student">
+            <QuizPage />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: '/students/quiz/:quizId/question/:questionId',
+        element: (
+          <AuthGuard requiredRole="student">
+            <SingleQuestionPage />
+          </AuthGuard>
+        ),
+      },
+      {
+        path: '/students/quiz-result/:quizId',
+        element: (
+          <AuthGuard requiredRole="student">
+            <StudentDashboard />
+          </AuthGuard>
+        ),
+      },
+      
+      // Protected professor routes
       {
         path: '/professors/profile',
-        element: <ProfessorProfile />,
+        element: (
+          <AuthGuard requiredRole="professor">
+            <ProfessorProfile />
+          </AuthGuard>
+        ),
       },
       {
         path: '/professors/students',
-        element: <StudentsList />,
+        element: (
+          <AuthGuard requiredRole="professor">
+            <StudentsList />
+          </AuthGuard>
+        ),
       },
       {
         path: '/professors/student/:studentId',
-        element: <StudentDetails />,
+        element: (
+          <AuthGuard requiredRole="professor">
+            <StudentDetails />
+          </AuthGuard>
+        ),
       },
     ],
   },
