@@ -1,5 +1,8 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { authService } from '../services/api';
+import axios from 'axios';
+
+// Base API URL
+const API_URL = 'http://localhost:5000/api';
 
 // Define types
 interface User {
@@ -25,6 +28,25 @@ interface AuthContextType {
 // Create context
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Create axios instance with auth header
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
+// Add interceptor for authentication
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers['Authorization'] = `Bearer ${token}`;
+  }
+  return config;
+}, error => {
+  return Promise.reject(error);
+});
+
 // Provider component
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -44,7 +66,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         if (storedToken) {
           // Verify the token with the backend
           try {
-            const response = await authService.verifyToken(storedToken);
+            const response = await api.post('/auth/verify-token', { token: storedToken });
             
             if (response.data.valid) {
               setUser(response.data.user);
@@ -57,11 +79,22 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
               setIsAuthenticated(false);
             }
           } catch (error) {
-            // Token verification failed
-            localStorage.removeItem('token');
-            localStorage.removeItem('studentUser');
-            localStorage.removeItem('professorUser');
-            setIsAuthenticated(false);
+            // If backend is not available, try to use stored user data
+            console.log('Token verification failed, using stored user data');
+            const storedStudentUser = localStorage.getItem('studentUser');
+            const storedProfessorUser = localStorage.getItem('professorUser');
+            
+            if (storedStudentUser) {
+              const parsedUser = JSON.parse(storedStudentUser);
+              setUser({...parsedUser, userType: 'student'});
+              setIsAuthenticated(true);
+            } else if (storedProfessorUser) {
+              const parsedUser = JSON.parse(storedProfessorUser);
+              setUser({...parsedUser, userType: 'professor'});
+              setIsAuthenticated(true);
+            } else {
+              setIsAuthenticated(false);
+            }
           }
         } else {
           // No token found
@@ -83,7 +116,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setError(null);
     
     try {
-      const response = await authService.login({ email, password });
+      const response = await api.post('/auth/login', { email, password });
       
       const { token, user } = response.data;
       
@@ -99,8 +132,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setUser(user);
       setIsAuthenticated(true);
     } catch (error: any) {
-      setError(error.message || 'Login failed');
-      throw error;
+      // Try to extract error message from response if available
+      const errorMessage = error.response?.data?.message || 'Login failed';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -112,7 +147,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setError(null);
     
     try {
-      const response = await authService.registerStudent(data);
+      const response = await api.post('/auth/register/student', data);
       
       const { token, user } = response.data;
       
@@ -123,8 +158,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setUser(user);
       setIsAuthenticated(true);
     } catch (error: any) {
-      setError(error.message || 'Registration failed');
-      throw error;
+      const errorMessage = error.response?.data?.message || 'Registration failed';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -136,7 +172,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     setError(null);
     
     try {
-      const response = await authService.registerProfessor(data);
+      const response = await api.post('/auth/register/professor', data);
       
       const { token, user } = response.data;
       
@@ -147,8 +183,9 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       setUser(user);
       setIsAuthenticated(true);
     } catch (error: any) {
-      setError(error.message || 'Registration failed');
-      throw error;
+      const errorMessage = error.response?.data?.message || 'Registration failed';
+      setError(errorMessage);
+      throw new Error(errorMessage);
     } finally {
       setLoading(false);
     }

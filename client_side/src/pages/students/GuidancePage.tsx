@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { studentService } from '../../services/api';
 import { useAuth } from '../../contexts/AuthContext';
-
 import StHeader from '../../components/students/stHeader';
+import axios from 'axios';
 
 interface TopicGuidance {
   topic: string;
@@ -53,7 +52,13 @@ const GuidancePage: React.FC = () => {
         
         // Get guidance data from API
         try {
-          const response = await studentService.getGuidance(user.id);
+          const token = localStorage.getItem('token');
+          const response = await axios.get(`http://localhost:5000/api/students/${user.id}/guidance`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          });
+          
           setGuidanceData(response.data);
         } catch (apiError: any) {
           console.error('API Error:', apiError);
