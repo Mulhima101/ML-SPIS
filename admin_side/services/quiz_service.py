@@ -1,9 +1,10 @@
+# admin_side/services/quiz_service.py
 import random
 from datetime import datetime, timedelta
 from models.QuizModel import Quiz, Question
-from models.ProgressModel import StudentQuiz
+from models.ProgressModel import StudentQuiz, KnowledgeLevel
 from app import db
-from utils.csv_utils import get_questions_from_csv
+from flask import current_app
 
 def generate_quiz_for_student(student, title, num_questions=15):
     """Generate a quiz for a student based on their knowledge levels"""
@@ -19,10 +20,10 @@ def generate_quiz_for_student(student, title, num_questions=15):
     db.session.flush()  # Get the quiz ID without committing yet
     
     # Get questions from the CSV file
+    from utils.csv_utils import get_questions_from_csv
     all_questions = get_questions_from_csv()
     
     # Get the student's knowledge levels
-    from models.ProgressModel import KnowledgeLevel
     knowledge_levels = KnowledgeLevel.query.filter_by(student_id=student.id).all()
     
     # Create a dictionary of topics and their knowledge levels
@@ -60,6 +61,14 @@ def generate_quiz_for_student(student, title, num_questions=15):
         else:
             selected_questions.extend(all_qs)
     
+    # If still not enough questions (e.g., no knowledge levels yet), just pick random questions
+    if not selected_questions:
+        all_qs = [q for topic_qs in topics_questions.values() for q in topic_qs]
+        if len(all_qs) > num_questions:
+            selected_questions = random.sample(all_qs, num_questions)
+        else:
+            selected_questions = all_qs[:num_questions]
+    
     # Limit to the desired number of questions
     selected_questions = selected_questions[:num_questions]
     
@@ -74,18 +83,27 @@ def generate_quiz_for_student(student, title, num_questions=15):
         ]
         
         # Parse the correct answer (1-based index)
-        correct_answer = int(q_data.get('Correct Answer', '1'))
+        try:
+            correct_answer = int(q_data.get('Correct Answer', '1'))
+        except (ValueError, TypeError):
+            correct_answer = 1  # Default to first option
+        
+        # Get weight or use default
+        try:
+            weight = float(q_data.get('Question Weight', 1.0))
+        except (ValueError, TypeError):
+            weight = 1.0
         
         # Create the question
         question = Question(
             quiz_id=quiz.id,
             text=q_data.get('Question Text', ''),
-            option_1=options[0],
-            option_2=options[1],
-            option_3=options[2],
-            option_4=options[3],
+            option_1=options[0] if len(options) > 0 else '',
+            option_2=options[1] if len(options) > 1 else '',
+            option_3=options[2] if len(options) > 2 else '',
+            option_4=options[3] if len(options) > 3 else '',
             correct_answer=correct_answer,
-            weight=float(q_data.get('Question Weight', 1.0)),
+            weight=weight,
             topic=q_data.get('Topic', ''),
             source_qid=q_data.get('QID', '')
         )
@@ -103,41 +121,3 @@ def generate_quiz_for_student(student, title, num_questions=15):
     db.session.commit()
     
     return quiz
-
-def calculate_quiz_score(student_quiz_id):
-    """Calculate the score for a completed quiz"""
-    from models.ProgressModel import StudentQuiz, StudentAnswer
-    
-    # Get the student quiz
-    student_quiz = StudentQuiz.query.get(student_quiz_id)
-    if not student_quiz:
-        raise ValueError("Student quiz not found")
-    
-    # Get all answers for this quiz
-    answers = StudentAnswer.query.filter_by(student_quiz_id=student_quiz_id).all()
-    
-    # Calculate score
-    total_points = 0
-    max_points = 0
-    
-    for answer in answers:
-        # Get the question
-        question = answer.question
-        
-        # Add points if correct
-        if answer.is_correct:
-            total_points += question.weight
-        
-        max_points += question.weight
-    
-    # Calculate percentage score
-    if max_points > 0:
-        score = (total_points / max_points) * 100
-    else:
-        score = 0
-    
-    # Update the student quiz record
-    student_quiz.score = score
-    db.session.commit()
-    
-    return score

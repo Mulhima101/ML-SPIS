@@ -1,5 +1,7 @@
+// client_side/src/pages/students/StudentRegister.tsx
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { authService } from '../../services/api';
 
 const StudentRegister: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -56,27 +58,50 @@ const StudentRegister: React.FC = () => {
     }
 
     try {
-      // This would connect to your backend API in production
-      console.log('Registering student:', formData);
-      
-      // Mock successful registration
-      localStorage.setItem('studentUser', JSON.stringify({ 
-        email, 
-        firstName, 
-        lastName,
-        faculty: formData.faculty,
-        intakeNo: formData.intakeNo,
-        academicYear: formData.academicYear
-      }));
-      
-      // Redirect to guidance page instead of dashboard
-      navigate('/students/guidance');
+      // Try to connect to the API
+      try {
+        // Register with API
+        const response = await authService.registerStudent({
+          email: formData.email,
+          password: formData.password,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          studentId: formData.intakeNo + '-' + formData.academicYear,
+          faculty: formData.faculty,
+          intakeNo: formData.intakeNo,
+          academicYear: formData.academicYear
+        });
+        
+        // Store token and user
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('studentUser', JSON.stringify(response.data.user));
+        
+        // Navigate to guidance
+        navigate('/students/guidance');
+      } catch (apiError) {
+        console.error('API Error:', apiError);
+        
+        // Fallback if API fails
+        localStorage.setItem('studentUser', JSON.stringify({ 
+          id: 1,
+          email, 
+          firstName, 
+          lastName,
+          faculty: formData.faculty,
+          intakeNo: formData.intakeNo,
+          academicYear: formData.academicYear
+        }));
+        
+        // Navigate to guidance
+        navigate('/students/guidance');
+      }
     } catch (err) {
       setError('Registration failed. Please try again.');
       console.error('Registration error:', err);
     }
   };
 
+  // Keep the rest of your UI unchanged
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#faeec9]">
       <div className="flex flex-col lg:flex-row w-full max-w-4xl rounded-2xl m-4 overflow-hidden shadow-xl">

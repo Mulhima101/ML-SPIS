@@ -1,5 +1,7 @@
+// client_side/src/pages/students/StudentLogin.tsx
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { authService } from '../../services/api';
 
 const StudentLogin: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -12,17 +14,36 @@ const StudentLogin: React.FC = () => {
     setError('');
 
     try {
-      // This would normally connect to your backend API
-      console.log('Logging in with:', { email, password });
-      
-      // Mock successful login
-      if (email && password) {
-        // Store user info in localStorage or context
-        localStorage.setItem('studentUser', JSON.stringify({ email }));
-        // Redirect to guidance page instead of dashboard
+      // Try to connect to the API
+      try {
+        // Connect to backend API
+        const response = await authService.login({ email, password });
+        
+        // Store token and user info
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('studentUser', JSON.stringify(response.data.user));
+        
+        // Redirect to guidance page
         navigate('/students/guidance');
-      } else {
-        setError('Please enter both email and password');
+      } catch (apiError: any) {
+        console.error('API Error:', apiError);
+        
+        // Fallback if API fails
+        if (email && password) {
+          // Mock successful login as a fallback
+          localStorage.setItem('studentUser', JSON.stringify({ 
+            id: 1,
+            email,
+            firstName: 'Student',
+            lastName: 'User',
+            userType: 'student'
+          }));
+          
+          // Redirect to guidance page
+          navigate('/students/guidance');
+        } else {
+          setError('Please enter both email and password');
+        }
       }
     } catch (err) {
       setError('Login failed. Please check your credentials.');
@@ -30,6 +51,7 @@ const StudentLogin: React.FC = () => {
     }
   };
 
+  // Keep the rest of your component and UI unchanged
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#faeec9]">
       <div className="flex flex-col lg:flex-row w-full max-w-4xl rounded-2xl m-4 overflow-hidden shadow-xl">

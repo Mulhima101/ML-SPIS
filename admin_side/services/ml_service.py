@@ -1,3 +1,4 @@
+# admin_side/services/ml_service.py
 from models.ProgressModel import KnowledgeLevel, StudentQuiz, StudentAnswer
 from models.QuizModel import Question
 from app import db
@@ -23,7 +24,7 @@ def update_knowledge_levels(student_id):
         for answer in answers:
             # Get the question
             question = Question.query.get(answer.question_id)
-            if not question:
+            if not question or not question.topic:
                 continue
             
             # Update topic performance
@@ -84,7 +85,7 @@ def get_personalized_guidance(student_id):
     
     # Calculate overall level
     scores = [kl.score for kl in knowledge_levels]
-    overall_score = np.mean(scores)
+    overall_score = np.mean(scores) if scores else 0.5
     
     if overall_score < 0.4:
         overall_level = 'Low'
@@ -145,6 +146,9 @@ def get_personalized_guidance(student_id):
             })
         
         topic_guidance.append(guidance)
+    
+    # Sort by score (lowest first)
+    topic_guidance.sort(key=lambda x: x['score'])
     
     # Generate learning path
     learning_path = {

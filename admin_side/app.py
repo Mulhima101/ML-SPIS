@@ -1,4 +1,5 @@
-from flask import Flask
+# admin_side/app.py
+from flask import Flask, jsonify
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 import os
@@ -11,8 +12,14 @@ def create_app():
     app = Flask(__name__)
     app.config.from_object('config.Config')
     
-    # Initialize CORS
-    CORS(app, resources={r"/*": {"origins": "*"}})
+    # Initialize CORS with more specific settings
+    CORS(app, resources={
+        r"/*": {
+            "origins": ["http://localhost:3000", "http://localhost:5173"],
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"]
+        }
+    })
     
     # Initialize database
     db.init_app(app)
@@ -34,6 +41,14 @@ def create_app():
     
     @app.route('/')
     def welcome():
-        return {"message": "Welcome to the ML-Based Student Progress Improvement System API!"}
+        return jsonify({"message": "Welcome to the ML-Based Student Progress Improvement System API!"})
+    
+    @app.errorhandler(404)
+    def not_found(e):
+        return jsonify({"message": "Route not found"}), 404
+    
+    @app.errorhandler(500)
+    def server_error(e):
+        return jsonify({"message": "Internal server error", "error": str(e)}), 500
     
     return app
