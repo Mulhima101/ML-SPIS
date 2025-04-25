@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useContext } from 'react';
+import { AuthContext } from '../../contexts/AuthContext';
 
 function StHeader() {
   const location = useLocation();
   const [activePage, setActivePage] = useState({ home: false, quiz: false });
+  const authContext = useContext(AuthContext);
 
   useEffect(() => {
     const pathname = location.pathname;
@@ -40,7 +43,7 @@ function StHeader() {
       <div className="flex items-center gap-4 pr-6">
         <button 
           onClick={() => {
-            localStorage.removeItem('studentUser');
+            authContext?.logout()
             window.location.href = '/students/login';
           }}
           className="text-sm font-medium text-gray-700 hover:text-amber-700"

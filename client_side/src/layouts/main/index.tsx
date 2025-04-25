@@ -12,13 +12,6 @@ const MainLayout: React.FC = () => {
   
   return (
     <div className={`app-container ${isAuthPage ? 'auth-page' : ''}`}>
-      {/* We don't need a header for auth pages as they have their own layout */}
-      {!isAuthPage && (
-        <header className="main-header">
-          {/* You can add a universal header here if needed */}
-        </header>
-      )}
-      
       <main className="main-content">
         <Outlet />
       </main>

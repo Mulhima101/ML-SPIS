@@ -9,7 +9,7 @@ def generate_token(user_id, user_type):
     payload = {
         'exp': datetime.utcnow() + timedelta(hours=24),  # Token expires in 24 hours
         'iat': datetime.utcnow(),
-        'sub': user_id,
+        'sub': str(user_id),
         'type': user_type
     }
     

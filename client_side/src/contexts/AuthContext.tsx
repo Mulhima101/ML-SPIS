@@ -26,7 +26,7 @@ interface AuthContextType {
 }
 
 // Create context
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // Create axios instance with auth header
 const api = axios.create({

@@ -118,7 +118,7 @@ def verify_token():
         payload = decode_token(token)
         
         # Get user from database
-        user_id = payload.get('sub')
+        user_id = int(payload.get('sub'))
         user_type = payload.get('type')
         
         # Find the user
