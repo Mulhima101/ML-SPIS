@@ -94,6 +94,7 @@ def login():
     
     # Generate token
     token = generate_token(user.id, user.user_type)
+    print(token)
     
     return jsonify({
         'message': 'Login successful',
