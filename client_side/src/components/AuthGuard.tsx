@@ -21,7 +21,7 @@ const AuthGuard: React.FC<AuthGuardProps> = ({ children, requiredRole }) => {
       } else if (requiredRole && user?.userType !== requiredRole) {
         // Redirect to appropriate dashboard if role doesn't match
         if (user?.userType === 'student') {
-          navigate('/students/guidance');
+          navigate('/students/dashboard');
         } else {
           navigate('/professors/profile');
         }

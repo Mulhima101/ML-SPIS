@@ -14,7 +14,7 @@ const StudentLogin: React.FC = () => {
   useEffect(() => {
     if (isAuthenticated) {
       if (user?.userType === 'student') {
-        navigate('/students/guidance');
+        navigate('/students/dashboard');
       } else if (user?.userType === 'professor') {
         navigate('/professors/profile');
       }

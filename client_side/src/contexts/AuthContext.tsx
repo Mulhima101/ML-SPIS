@@ -37,7 +37,7 @@ const api = axios.create({
 });
 
 // Add interceptor for authentication
-api.interceptors.request.use(config => {
+/*api.interceptors.request.use(config => {
   const token = localStorage.getItem('token');
   if (token) {
     config.headers['Authorization'] = `Bearer ${token}`;
@@ -45,7 +45,7 @@ api.interceptors.request.use(config => {
   return config;
 }, error => {
   return Promise.reject(error);
-});
+});*/
 
 // Provider component
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
