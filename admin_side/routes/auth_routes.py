@@ -33,12 +33,13 @@ def register_student():
         db.session.commit()
         
         # Generate token
-        token = generate_token(student.id, 'student')
+        #token = generate_token(student.id, 'student')
         
         return jsonify({
+            'success': True,
             'message': 'Student registered successfully',
-            'token': token,
-            'user': student.to_dict()
+            #'token': token,
+            #'user': student.to_dict()
         }), 201
     except Exception as e:
         db.session.rollback()

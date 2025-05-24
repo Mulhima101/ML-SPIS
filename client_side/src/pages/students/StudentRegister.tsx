@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { authService } from '../../services/api';
+import { registerStudent } from '../../services/authService';
 
 const StudentRegister: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -19,7 +19,7 @@ const StudentRegister: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
-    
+
     if (type === 'checkbox') {
       const target = e.target as HTMLInputElement;
       setFormData(prev => ({
@@ -56,7 +56,7 @@ const StudentRegister: React.FC = () => {
       return;
     }
 
-    try {
+    /*try {
       // Try to connect to the API
       try {
         // Register with API
@@ -97,6 +97,29 @@ const StudentRegister: React.FC = () => {
     } catch (err) {
       setError('Registration failed. Please try again.');
       console.error('Registration error:', err);
+    }*/
+
+    try {
+      const result = await registerStudent({
+        email: formData.email,
+        password: formData.password,
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        studentId: formData.intakeNo + '-' + formData.academicYear,
+        faculty: formData.faculty,
+        intakeNo: formData.intakeNo,
+        academicYear: formData.academicYear
+      });
+
+      if (result === true) {
+        alert('Registration successful! Please login to continue.');
+        navigate('/students/login');
+      } else {
+        setError('Registration failed. Please try again.');
+      }
+    } catch (error) {
+      console.error('Registration error:', error);
+      setError('Something went wrong in our end while registering. Please try again later.');
     }
   };
 
@@ -114,18 +137,18 @@ const StudentRegister: React.FC = () => {
             </h2>
           </div>
         </div>
-        
+
         {/* Right Side */}
         <div className="w-full lg:w-3/5 bg-[#fcfaed] p-4 sm:p-12 relative">
-          
+
           <h2 className="text-2xl font-bold mb-6 text-center">Student Registration</h2>
-          
+
           {error && (
             <div className="bg-red-100 text-red-700 p-3 rounded-md mb-4 text-sm">
               {error}
             </div>
           )}
-          
+
           <form onSubmit={handleSubmit} className='space-y-2'>
             <div className="grid grid-cols-2 gap-2">
               <div>
@@ -140,7 +163,7 @@ const StudentRegister: React.FC = () => {
                   required
                 />
               </div>
-              
+
               <div>
                 <label className="block text-gray-700 mb-1 font-medium text-sm">Last Name</label>
                 <input
@@ -154,7 +177,7 @@ const StudentRegister: React.FC = () => {
                 />
               </div>
             </div>
-            
+
             <div>
               <label className="block text-gray-700 mb-1 font-medium text-sm">Email ID</label>
               <input
@@ -167,7 +190,7 @@ const StudentRegister: React.FC = () => {
                 required
               />
             </div>
-            
+
             <div>
               <label className="block text-gray-700 mb-1 font-medium text-sm">Faculty</label>
               <select
@@ -182,7 +205,7 @@ const StudentRegister: React.FC = () => {
                 <option value="Data Science">Data Science</option>
               </select>
             </div>
-            
+
             <div className="grid grid-cols-2 gap-2">
               <div>
                 <label className="block text-gray-700 mb-1 font-medium text-sm">Intake No</label>
@@ -200,7 +223,7 @@ const StudentRegister: React.FC = () => {
                   <option value="10">10</option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="block text-gray-700 mb-1 font-medium text-sm">Academic Year</label>
                 <select
@@ -216,7 +239,7 @@ const StudentRegister: React.FC = () => {
                 </select>
               </div>
             </div>
-            
+
             <div>
               <label className="block text-gray-700 mb-1 font-medium text-sm">Password</label>
               <input
@@ -228,7 +251,7 @@ const StudentRegister: React.FC = () => {
                 required
               />
             </div>
-            
+
             <div className="mb-4">
               <label className="block text-gray-700 mb-1 font-medium text-sm">Confirm Password</label>
               <input
@@ -240,7 +263,7 @@ const StudentRegister: React.FC = () => {
                 required
               />
             </div>
-            
+
             <div className="mb-4 flex items-center">
               <input
                 type="checkbox"
@@ -252,14 +275,14 @@ const StudentRegister: React.FC = () => {
               />
               <label className="text-sm text-gray-700">I Agree to Terms & Conditions</label>
             </div>
-            
-            <button 
-              type="submit" 
+
+            <button
+              type="submit"
               className="w-full py-2 bg-amber-600 text-white font-semibold rounded-lg hover:bg-amber-700 transition"
             >
               Sign Up
             </button>
-            
+
             <div className="mt-2 text-center text-sm">
               <Link to="/students/login" className="text-amber-600">Already have an account? Login</Link>
             </div>
