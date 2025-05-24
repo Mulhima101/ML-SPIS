@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from werkzeug.security import generate_password_hash, check_password_hash
 from models.UserModel import User, Student, Professor
 from app import db
@@ -33,12 +33,13 @@ def register_student():
         db.session.commit()
         
         # Generate token
-        token = generate_token(student.id, 'student')
+        #token = generate_token(student.id, 'student')
         
         return jsonify({
+            'success': True,
             'message': 'Student registered successfully',
-            'token': token,
-            'user': student.to_dict()
+            #'token': token,
+            #'user': student.to_dict()
         }), 201
     except Exception as e:
         db.session.rollback()
@@ -82,25 +83,35 @@ def register_professor():
 
 @auth_bp.route('/login', methods=['POST'])
 def login():
-    data = request.get_json()
-    email = data.get('email')
-    password = data.get('password')
-    
-    # Verify credentials
-    user = User.query.filter_by(email=email).first()
-    
-    if not user or not user.check_password(password):
-        return jsonify({'message': 'Invalid credentials'}), 401
-    
-    # Generate token
-    token = generate_token(user.id, user.user_type)
-    print(token)
-    
-    return jsonify({
-        'message': 'Login successful',
-        'token': token,
-        'user': user.to_dict()
-    }), 200
+    try:
+        data = request.get_json()
+        email = data.get('email')
+        password = data.get('password')
+        
+        if not email or not password:
+            return jsonify({'message': 'Email and password are required'}), 400
+        
+        user = User.query.filter_by(email=email).first()
+        
+        if not user:
+            return jsonify({'message': 'User not found'}), 401
+            
+        password_check = user.check_password(password)
+        
+        if not password_check:
+            return jsonify({'message': 'Invalid password'}), 401
+
+        token = generate_token(user.id, user.user_type)
+        
+        return jsonify({
+            'message': 'Login successful',
+            'token': token,
+            'user': user.to_dict()
+        }), 200
+        
+    except Exception as e:
+        current_app.logger.error(f"Login error: {str(e)}")
+        return jsonify({'message': 'An error occurred during login'}), 500
 
 @auth_bp.route('/verify-token', methods=['POST'])
 def verify_token():

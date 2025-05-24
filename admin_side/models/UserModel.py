@@ -1,5 +1,6 @@
 from datetime import datetime
 from werkzeug.security import generate_password_hash, check_password_hash
+from flask import current_app
 from app import db
 
 class User(db.Model):
@@ -19,10 +20,29 @@ class User(db.Model):
     }
     
     def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+        if not password:
+            raise ValueError("Password cannot be empty")
+        try:
+            self.password_hash = generate_password_hash(
+                password,
+                method='pbkdf2:sha256:260000'
+            )
+            current_app.logger.debug(f"Password hash generated: {self.password_hash[:20]}...")
+        except Exception as e:
+            current_app.logger.error(f"Error generating password hash: {str(e)}")
+            raise
         
     def check_password(self, password):
-        return check_password_hash(self.password_hash, password)
+        if not self.password_hash:
+            current_app.logger.error(f"User {self.id} has no password hash")
+            return False
+        try:
+            result = check_password_hash(self.password_hash, password)
+            current_app.logger.debug(f"Password hash for comparison: {self.password_hash[:20]}...")
+            return result
+        except Exception as e:
+            current_app.logger.error(f"Password check error for user {self.id}: {str(e)}")
+            return False
     
     def to_dict(self):
         return {
