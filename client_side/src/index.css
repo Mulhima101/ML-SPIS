@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* src/index.css (or update the existing :root variables) */
+:root {
+  --primary-background-color: #faeec9;
+  --secondary-background-color: #fcfaed;
+  --primary-text-color: #333333;
+  --primary-accent-color: #f57c00;
+  --primary-accent-hover-color: #ef6c00;
+
+  --header-bg: #fcfaed;
+  --header-btn-active: var(--primary-background-color);
+
+  /* Knowledge Level Colors */
+  --low-level-color: #f44336;  
+  --normal-level-color: #2196f3;
+  --high-level-color: #4caf50;
+
+  /* Quiz Page Colors */
+  --quiz-button-color: #f57c00;
+  --quiz-button-text-color: white;
+}
+
+body {
+  margin: 0;
+  font-family: 'Arial', sans-serif;
+  background-color: var(--primary-background-color);
+  color: var(--primary-text-color);
+  line-height: 1.6;
+}
+
+button {
+  cursor: pointer;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-top: 0;
+  font-weight: 600;
+}
+
+a {
+  text-decoration: none;
+  color: var(--primary-accent-color);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Utility classes */
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  font-size: 18px;
+  color: #666;
+}
+
+.error-message {
+  background-color: #ffebee;
+  color: #d32f2f;
+  padding: 15px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+/* Import CSS for components */
+@import 'styles/auth.css';
+@import 'styles/dashboard.css';
+@import 'styles/profile.css';
+@import 'styles/guidance.css';
+@import 'styles/quiz.css';
+@import 'styles/quiz-all.css';
+@import 'styles/student-details.css';
