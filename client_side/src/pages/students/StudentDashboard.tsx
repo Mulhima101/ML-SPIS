@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 import '../../styles/dashboard.css';
 
 import StHeader from '../../components/students/stHeader';
-import { getStudentQuizzes } from '../../services/quizService';
+import { getStudentQuizzes } from '../../services/quizService'
 import { getStudentModulePerformance } from '../../services/studentService';
 import { toIST } from '../../utils/dateUtils';
 
-interface Quiz {
+interface DashboardQuiz {
   id: string;
   title: string;
   status: 'completed' | 'ongoing' | 'upcoming';
@@ -20,6 +20,20 @@ interface Quiz {
   module_id?: string;
 }
 
+type RawQuiz = {
+  id: string;
+  title?: string;
+  status?: string;
+  created_at?: string;
+  quiz_start_time?: string;
+  quiz_end_time?: string;
+  score?: number;
+  total_questions?: number;
+  module_name?: string;
+  module_id?: string;
+  [key: string]: unknown;
+};
+
 interface KnowledgeLevel {
   level: 'Low' | 'Normal' | 'High';
   overall: number;
@@ -30,22 +44,41 @@ interface KnowledgeLevel {
 }
 
 interface ModulePerformance {
-  id: number;
+  id: string;
   name: string;
   total_quizzes: number;
   completed_quizzes: number;
   average_score: number;
   quiz_percentage: number;
   quiz_details?: {
-    quiz_id: number;
+    quiz_id: string | number;
     quiz_title: string;
     score: number;
     completed_at: string;
   }[];
 }
 
+interface ApiModuleDetail {
+  quiz_id?: string | number;
+  quiz_title?: string;
+  score?: number;
+  completed_at?: string;
+  [key: string]: unknown;
+}
+
+interface ApiModule {
+  id?: string | number;
+  name?: string;
+  total_quizzes?: number;
+  completed_quizzes?: number;
+  average_score?: number;
+  quiz_percentage?: number;
+  quiz_details?: ApiModuleDetail[];
+  [key: string]: unknown;
+}
+
 const StudentDashboard: React.FC = () => {
-  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
+  const [quizzes, setQuizzes] = useState<DashboardQuiz[]>([]);
   const [knowledgeLevel, setKnowledgeLevel] = useState<KnowledgeLevel | null>(null);
   const [modulePerformance, setModulePerformance] = useState<ModulePerformance[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -55,29 +88,47 @@ const StudentDashboard: React.FC = () => {
       try {
         setLoading(true);
 
-        const quizzesResponse = await getStudentQuizzes();
-        const transformedQuizzes = quizzesResponse.quizzes?.slice(0, 3).map(quiz => ({
-          id: quiz.id,
-          title: quiz.title,
-          status: quiz.status === 'completed' ? 'completed' :
-            quiz.status === 'in_progress' ? 'ongoing' : 'upcoming',
-          date: quiz.created_at ? quiz.created_at.split('T')[0] : new Date().toISOString().split('T')[0],
-          startDate: quiz.quiz_start_time ? toIST(quiz.quiz_start_time).toISOString().split('T')[0] : undefined,
-          endDate: quiz.quiz_end_time ? toIST(quiz.quiz_end_time).toISOString().split('T')[0] : undefined,
-          score: quiz.score,
-          totalQuestions: quiz.total_questions || 15,
-          module_name: quiz.module_name,
-          module_id: quiz.module_id
-        })) || [];
+        const quizzesResponse = await getStudentQuizzes() as unknown as { quizzes?: RawQuiz[]; total?: number };
+        const transformedQuizzes = (quizzesResponse.quizzes ?? []).slice(0, 3).map((quiz) => ({
+          id: String(quiz.id),
+          title: String(quiz.title ?? 'Untitled Quiz'),
+          status: quiz.status === 'completed' ? 'completed' : quiz.status === 'in_progress' ? 'ongoing' : 'upcoming',
+          date: quiz.created_at ? String(quiz.created_at).split('T')[0] : new Date().toISOString().split('T')[0],
+          startDate: quiz.quiz_start_time ? toIST(String(quiz.quiz_start_time)).toISOString().split('T')[0] : undefined,
+          endDate: quiz.quiz_end_time ? toIST(String(quiz.quiz_end_time)).toISOString().split('T')[0] : undefined,
+          score: typeof quiz.score === 'number' ? quiz.score : undefined,
+          totalQuestions: typeof quiz.total_questions === 'number' ? quiz.total_questions : 15,
+          module_name: quiz.module_name ? String(quiz.module_name) : undefined,
+          module_id: quiz.module_id ? String(quiz.module_id) : undefined,
+        })) as DashboardQuiz[];
 
         setQuizzes(transformedQuizzes);
 
         try {
           const modulePerformanceData = await getStudentModulePerformance();
-          setModulePerformance(modulePerformanceData.modules || []);
 
-          if (modulePerformanceData.modules && modulePerformanceData.modules.length > 0) {
-            const overallScore = modulePerformanceData.modules.reduce((sum, module) => sum + module.average_score, 0) / modulePerformanceData.modules.length;
+          // Coerce API modules into the Dashboard ModulePerformance shape
+          const safeModules: ModulePerformance[] = ((modulePerformanceData.modules || []) as unknown as ApiModule[]).map((m: ApiModule) => ({
+            id: String(m.id ?? ''),
+            name: String(m.name ?? ''),
+            total_quizzes: Number(m.total_quizzes ?? 0),
+            completed_quizzes: Number(m.completed_quizzes ?? 0),
+            average_score: Number(m.average_score ?? 0),
+            quiz_percentage: Number(m.quiz_percentage ?? 0),
+            quiz_details: Array.isArray(m.quiz_details)
+              ? m.quiz_details.map((qd: ApiModuleDetail) => ({
+                quiz_id: qd.quiz_id ?? '',
+                quiz_title: String(qd.quiz_title ?? ''),
+                score: Number(qd.score ?? 0),
+                completed_at: String(qd.completed_at ?? ''),
+              }))
+              : [],
+          }));
+
+          setModulePerformance(safeModules);
+
+          if (safeModules && safeModules.length > 0) {
+            const overallScore = safeModules.reduce((sum, module) => sum + module.average_score, 0) / safeModules.length;
             const level = overallScore >= 80 ? 'High' : overallScore >= 60 ? 'Normal' : 'Low';
 
             setKnowledgeLevel({
